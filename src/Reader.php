@@ -72,48 +72,32 @@ class Reader
             return T_BUILTIN_TYPE;
         }
 
-        if ($behind[0] === T_AS) {
-            return T_METHOD_NAME;
-        }
-
-        if ($behind[0] === T_DOUBLE_COLON) {
-            if ($ahead[1] === '(' || $ahead[0] === T_INSTEADOF || $ahead[0] === T_AS) {
-                return T_METHOD_NAME;
-            }
-
-            return T_CONST_NAME;
-        }
-
-        if ($behind[0] === T_OBJECT_OPERATOR) {
-            if ($ahead[1] === '(') {
-                return T_METHOD_NAME;
-            }
-
-            return T_VARIABLE;
-        }
-
-        if ($behind[0] === T_FUNCTION) {
-            $twoBehind = $this->lookBehind($index - 2);
-            if (in_array($twoBehind[0], [T_PRIVATE, T_PROTECTED, T_PUBLIC, T_STATIC])) {
-                return T_METHOD_NAME;
-            }
-
-            return T_FUNCTION_DECL;
-        }
-
-        if (in_array($behind[0], [T_NEW, T_USE, T_PRIVATE, T_NAMESPACE, T_PROTECTED, T_PUBLIC, T_CLASS, T_INTERFACE, T_TRAIT, T_EXTENDS, T_IMPLEMENTS, T_INSTEADOF])) {
-            return T_CLASS_NAME;
-        }
-
-        if (in_array($behind[1], [':', '|', '?', ',', '('])) {
-            return T_CLASS_NAME;
-        }
-
         if ($ahead[0] === T_DOUBLE_COLON) {
             return T_CLASS_NAME;
         }
 
-        return T_CONST_NAME;
+        return (match ($behind[0]) {
+            T_NEW, T_USE, T_PRIVATE, T_PROTECTED, T_PUBLIC, T_NAMESPACE, T_CLASS, T_INTERFACE, T_TRAIT, T_EXTENDS, T_IMPLEMENTS, T_INSTEADOF => fn () => T_CLASS_NAME,
+            T_AS              => fn ()              => T_METHOD_NAME,
+            T_DOUBLE_COLON    => fn ()    => $ahead[1] === '(' || in_array($ahead[0], [T_INSTEADOF, T_AS]) ? T_METHOD_NAME : T_CONST_NAME,
+            T_OBJECT_OPERATOR => fn () => $ahead[1] === '(' ? T_METHOD_NAME : T_VARIABLE,
+            T_FUNCTION        => function () use ($index) {
+                $twoBehind = $this->lookBehind($index - 2);
+
+                return in_array($twoBehind[0], [T_PRIVATE, T_PROTECTED, T_PUBLIC, T_STATIC]) ? T_METHOD_NAME : T_FUNCTION_DECL;
+            },
+            default => function () use ($ahead, $behind) {
+                if (in_array($behind[1], [':', '|', '?', ',', '('])) {
+                    return T_CLASS_NAME;
+                }
+
+                if ($ahead[1] === '(') {
+                    return T_FUNCTION_NAME;
+                }
+
+                return T_CONST_NAME;
+            }
+        })();
     }
 
     public function lookBehind(int $index): array
