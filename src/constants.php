@@ -27,3 +27,11 @@ if (!defined('T_FUNCTION_DECL')) {
 if (!defined('T_DECLARE_PARAMETER')) {
     define('T_DECLARE_PARAMETER', 10_000 + 64);
 }
+
+if (!defined('T_ATTRIBUTE_CLASS')) {
+    define('T_ATTRIBUTE_CLASS', 10_000 + 128);
+}
+
+if (!defined('T_ATTRIBUTE_END')) {
+    define('T_ATTRIBUTE_END', 10_000 + 256);
+}

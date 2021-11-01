@@ -11,8 +11,9 @@ class Theme
     public string $string;
     public string $function;
     public string $number;
+    public string $attribute;
 
-    public function __get(string $name)
+    public function __get(string $name): string
     {
         return $this->default;
     }

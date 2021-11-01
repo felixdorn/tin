@@ -4,4 +4,4 @@ composer.lock
 .php_cs.cache
 *.swp
 *.swo
-bench.php
+render.php

@@ -10,6 +10,7 @@ namespace A {
 
 namespace {
     use function A\abc;
+    use JetBrains\PhpStorm\Internal\LanguageLevelTypeAware;
 
     abc();
 
@@ -89,6 +90,7 @@ namespace {
     $a = static function () {
     };
 
+    #[LanguageLevelTypeAware(['a' => 4], 1)]
     function a(A $a)
     {
     }

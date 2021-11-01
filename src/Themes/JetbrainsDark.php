@@ -17,4 +17,6 @@ class JetbrainsDark extends Theme
     public string $function = '255;198;109';
 
     public string $string = '106;135;89';
+
+    public string $attribute = '187;181;41';
 }

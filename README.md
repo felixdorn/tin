@@ -78,9 +78,7 @@ You can check the full profiles here:
 
 ## Future
 
-* Support for attributes
 * Support for named parameters
-* new colors to a theme shouldn't break the whole thing
 * Various outputs (cli / web)
 * Line prefixes aka support for line numbers
 * grayscale theme
