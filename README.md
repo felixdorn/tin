@@ -32,7 +32,16 @@ $tin->process("<?php\n\necho 'Hello world';", ansi: true)
 
 You can disable the ansi output by passing `false` as the second parameter.
 
-## Theme
+## Themes
+
+* JetbrainsDark `Felix\Tin\Themes\JetbrainsDark`
+* OneDark `Felix\Tin\Themes\OneDark`
+
+### Creating a theme
+
+You need to extend `Felix\Tin\Themes\Theme` and set the colors to whatever you want.
+
+The color are RGB values separated by a `;`.
 
 ```php
 use Felix\Tin\Themes\Theme;
@@ -49,12 +58,10 @@ class OneDark extends Theme
 }
 ```
 
-Colors are RGB values separated with a `;`.
-
 ## Performance
 
-The code has been optimized a lot as I needed to highlight thousands of files quickly with a low-memory usage.
-Therefore, some compromise were made in terms of code readability and simplicity.
+The code has been optimized a lot as i needed to highlight files quickly. Therefore, some compromise were made in terms
+of code readability and simplicity.
 
 It takes on average 0.0007 second per file.
 
@@ -68,6 +75,15 @@ You can check the full profiles here:
 
 * [Highlighting PHPUnit](https://blackfire.io/profiles/2bd4c150-5226-4645-85fa-ffed43dc4602/graph)
 * [Highlighting Vendor](https://blackfire.io/profiles/fa9b900f-d398-4efa-b999-9e7470b714b4/graph)
+
+## Future
+
+* Support for attributes
+* Support for named parameters
+* new colors to a theme shouldn't break the whole thing
+* Various outputs (cli / web)
+* Line prefixes aka support for line numbers
+* grayscale theme
 
 ## Testing
 
