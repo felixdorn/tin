@@ -1,8 +1,4 @@
 parameters:
-    level: max
+    level: 9
     paths:
         - src
-
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
-    reportUnmatchedIgnoredErrors: true

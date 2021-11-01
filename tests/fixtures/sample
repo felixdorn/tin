@@ -89,7 +89,7 @@ namespace {
     $a = static function () {
     };
 
-    function a()
+    function a(A $a)
     {
     }
 

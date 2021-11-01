@@ -12,9 +12,10 @@
         "php": "^8.0"
     },
     "require-dev": {
+        "blackfire/php-sdk": "^1.27",
         "friendsofphp/php-cs-fixer": "^v2.19.2",
         "pestphp/pest": "^v1.20.0",
-        "phpstan/phpstan": "^0.12.99",
+        "phpstan/phpstan": "^1.0.0",
         "spatie/pest-plugin-snapshots": "^1.1",
         "symfony/var-dumper": "^v5"
     },

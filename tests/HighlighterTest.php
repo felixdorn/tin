@@ -16,9 +16,6 @@ it('can highlight', function () {
         file_get_contents(__DIR__ . '/fixtures/sample') ?: throw new RuntimeException('can not read sample file'),
     );
 
-    // For readability
-    $hl = str_replace("\e", '\\e', $hl);
-
     assertMatchesTextSnapshot($hl);
 });
 

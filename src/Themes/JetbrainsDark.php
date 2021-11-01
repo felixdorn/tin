@@ -2,47 +2,19 @@
 
 namespace Felix\Highlighter\Themes;
 
-use Felix\Highlighter\Contracts\Theme;
-
-class JetbrainsDark implements Theme
+class JetbrainsDark extends Theme
 {
-    public function keyword(): int
-    {
-        return 0xCC7832;
-    }
+    public string $keyword = '204;102;50';
 
-    public function variable(): int
-    {
-        return 0x9876AA;
-    }
+    public string $variable = '152;118;170';
 
-    public function int(): int
-    {
-        return 0x6A8759;
-    }
+    public string $comment = '128;128;128';
 
-    public function comment(): int
-    {
-        return 0x808080;
-    }
+    public string $default = '169;183;198';
 
-    public function default(): int
-    {
-        return 0xA9B7C6;
-    }
+    public string $number = '104;151;187';
 
-    public function number(): int
-    {
-        return 0x6897BB;
-    }
+    public string $function = '255;198;109';
 
-    public function function(): int
-    {
-        return 0xFFC66D;
-    }
-
-    public function string(): int
-    {
-        return 0x6A8759;
-    }
+    public string $string = '106;135;89';
 }

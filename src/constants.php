@@ -23,3 +23,7 @@ if (!defined('T_METHOD_NAME')) {
 if (!defined('T_FUNCTION_DECL')) {
     define('T_FUNCTION_DECL', 10_000 + 32);
 }
+
+if (!defined('T_DECLARE_PARAMETER')) {
+    define('T_DECLARE_PARAMETER', 10_000 + 64);
+}
