@@ -1,0 +1,97 @@
+<?php declare(ticks=0);
+
+namespace A {
+    function abc()
+    {
+
+    }
+}
+
+namespace {
+
+    use A\B\C\D;
+    use function A\abc;
+
+    abc();
+
+    $a = 1;
+    $a = 0xEF;
+    $a = 1_000_000;
+
+    trait G {}
+    trait E {}
+
+    class A extends B implements C
+    {
+        use E,G {
+            G::a insteadof E;
+            E::b as c;
+        }
+
+        public function x() {
+            foreach([] as $f) {
+
+            }
+        }
+
+        public const A = 1;
+        public static int $b = 1;
+        private Closure $c;
+
+        public function __construct(
+            protected string $a
+        )
+        {
+            $this->a = $a;
+        }
+
+        public static function a(?B &$a = null, float|int|C $b = 3, C $c): float|B
+        {
+            return 1.0;
+        }
+
+        public function b()
+        {
+        }
+
+        protected function c(): int
+        {
+            return 1;
+        }
+    }
+
+    if (true && false || !1) {
+        echo 'hey';
+        echo 'oh!';
+    } elseif (1 << 2) {
+        exit(1);
+    } else {
+        isset($a);
+    }
+
+
+    const A_CONSTANT = 1;
+
+    A_CONSTANT + A_CONSTANT;
+
+    (new A)->b();
+
+    A::$b;
+    A::A;
+    A::a($a, 1);
+
+    $c = " {d}";
+
+    echo "{$a} and b" . $c;
+
+    $a = static function () {
+
+    };
+
+    function a()
+    {
+    }
+
+    $f = fn($a): B => 1;
+}
+?>
