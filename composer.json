@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Felix\\Highlighter\\": "src/"
+            "Felix\\Tin\\": "src/"
         },
         "files": [
             "src/constants.php"
@@ -29,7 +29,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Felix\\Highlighter\\Tests\\": "tests/"
+            "Felix\\Tin\\Tests\\": "tests/"
         }
     },
     "minimum-stability": "dev",

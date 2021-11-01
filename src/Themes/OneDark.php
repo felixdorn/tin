@@ -1,6 +1,6 @@
 <?php
 
-namespace Felix\Highlighter\Themes;
+namespace Felix\Tin\Themes;
 
 class OneDark extends Theme
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Felix\Highlighter;
+namespace Felix\Tin;
 
-use Felix\Highlighter\Themes\Theme;
+use Felix\Tin\Themes\Theme;
 use PhpToken;
 
-class Highlighter
+class Tin
 {
     protected Theme $theme;
 
@@ -52,9 +52,18 @@ class Highlighter
     }
 
     /**
+     * Find the real type of a T_STRING token which is one of :.
+     *
+     *  - T_CLASS_NAME
+     *  - T_FUNCTION_DECL
+     *  - T_METHOD_NAME
+     *  - T_CONST_NAME
+     *  - T_VARIABLE
+     *  - T_DECLARE_PARAMETER
+     *
      * @param array<int, PhpToken> $tokens
      */
-    public function idFromContext(array $tokens, int $index): int
+    protected function idFromContext(array $tokens, int $index): int
     {
         $ahead = $this->read($tokens, $index + 1);
 
@@ -98,9 +107,11 @@ class Highlighter
     }
 
     /**
+     * Finds the nearest non-whitespace token at a given index in a given direction (either ltr or rtl).
+     *
      * @param array<int, PhpToken> $tokens
      */
-    public function read(array $tokens, int $index, bool $ltr = true): PhpToken
+    protected function read(array $tokens, int $index, bool $ltr = true): PhpToken
     {
         $token = $tokens[$index];
 
