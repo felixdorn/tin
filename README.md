@@ -22,6 +22,8 @@ composer require felixdorn/tin
 
 ![A piece of code highlighted using tin](art/screenshot.png)
 
+Yes, this comes from a terminal
+
 ## Usage
 
 ```php
@@ -81,6 +83,7 @@ You can check the full profiles here:
 * [Highlighting Vendor](https://blackfire.io/profiles/fa9b900f-d398-4efa-b999-9e7470b714b4/graph)
 
 ## Future
+
 * PHPDoc
 * Various outputs (cli / web)
 * Line prefixes aka support for line numbers
