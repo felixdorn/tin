@@ -77,9 +77,9 @@ of code readability and simplicity.
 
 It takes on average 0.0007 second per file.
 
-To put that in context, highlighting the whole PHPUnit library takes ~265ms and around 2.8mb of memory
+To put that in context, highlighting the whole PHPUnit library takes ~265ms.
 
-Highlighting the vendor directory of this package takes ~1.78s for ~13mb of memory. That's 1320 files per seconds.
+Highlighting the vendor directory of this package takes ~1.78s. That's 1320 files per seconds.
 
 > PHP built-in tokenizer for PHP uses most of the memory (around 80-90%)
 
