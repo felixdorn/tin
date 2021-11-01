@@ -12,26 +12,14 @@ if (!defined('T_CONST_NAME')) {
     define('T_CONST_NAME', 10_000 + 4);
 }
 
-if (!defined('T_TRUE')) {
-    define('T_TRUE', 10_000 + 8);
-}
-
-if (!defined('T_FALSE')) {
-    define('T_FALSE', 10_000 + 16);
-}
-
 if (!defined('T_BUILTIN_TYPE')) {
-    define('T_BUILTIN_TYPE', 10_000 + 32);
+    define('T_BUILTIN_TYPE', 10_000 + 8);
 }
 
 if (!defined('T_METHOD_NAME')) {
-    define('T_METHOD_NAME', 10_000 + 64);
-}
-
-if (!defined('T_NULL')) {
-    define('T_NULL', 10_000 + 128);
+    define('T_METHOD_NAME', 10_000 + 16);
 }
 
 if (!defined('T_FUNCTION_DECL')) {
-    define('T_FUNCTION_DECL', 10_000 + 256);
+    define('T_FUNCTION_DECL', 10_000 + 32);
 }

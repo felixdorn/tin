@@ -85,9 +85,6 @@ class Highlighter
 
         // Custom
         T_BUILTIN_TYPE,
-        T_TRUE,
-        T_FALSE,
-        T_NULL,
     ];
     public static array $constants = [
         T_CLASS_C,
@@ -108,6 +105,7 @@ class Highlighter
         T_OBJECT_CAST,
         T_STRING_CAST,
     ];
+
     protected Theme $theme;
 
     public function __construct(Theme $theme)
@@ -122,31 +120,28 @@ class Highlighter
         }
 
         $highlighted = '';
-        $reader      = new Reader($code);
+        $tokens      = Token::tokenize($code);
 
-        while (!$reader->eof()) {
-            $token = $reader->consume();
-
-            if (in_array($token[0], static::$keywords)) {
+        foreach ($tokens as $token) {
+            if ($token->is(static::$keywords)) {
                 $color = $this->theme->keyword();
-            } elseif (in_array($token[0], static::$constants)) {
+            } elseif ($token->is(static::$constants)) {
                 $color = $this->theme->variable();
-            } elseif (in_array($token[0], static::$casts)) {
+            } elseif ($token->is(static::$casts)) {
                 $color = $this->theme->keyword();
             } else {
-                $color = match ($token[0]) {
+                $color = match ($token->id) {
                     T_CONSTANT_ENCAPSED_STRING, T_ENCAPSED_AND_WHITESPACE => $this->theme->string(),
                     T_COMMENT, T_DOC_COMMENT => $this->theme->comment(),
                     T_VARIABLE, T_CONST_NAME, T_NUM_STRING => $this->theme->variable(),
                     T_LNUMBER, T_DNUMBER => $this->theme->number(),
                     T_METHOD_NAME, T_FUNCTION_DECL => $this->theme->function(),
-                    default       => $this->theme->default()
+                    default => $this->theme->default()
                 };
             }
 
-            [$r, $g, $b] = array_map('hexdec', str_split($color, 2));
-
-            $highlighted .= sprintf("\e[38;2;%s;%s;%sm%s\e[0m", $r, $g, $b, $token[1]);
+            [$r, $g, $b] = array_map('hexdec', str_split(dechex($color), 2));
+            $highlighted .= sprintf("\e[38;2;%s;%s;%sm%s\e[0m", $r, $g, $b, $token->text);
         }
 
         return $highlighted;
