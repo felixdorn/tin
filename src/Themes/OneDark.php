@@ -6,38 +6,43 @@ use Felix\Highlighter\Contracts\Theme;
 
 class OneDark implements Theme
 {
-    public function keyword(): string
+    public function keyword(): int
     {
-        return 'c778dd';
+        return 0xc778dd;
     }
 
-    public function variable(): string
+    public function variable(): int
     {
-        return 'e06b74';
+        return 0xe06b74;
     }
 
-    public function string(): string
+    public function int(): int
     {
-        return '98c379';
+        return 0x98c379;
     }
 
-    public function comment(): string
+    public function comment(): int
     {
-        return '5b626e';
+        return 0x5b626e;
     }
 
-    public function default(): string
+    public function default(): int
     {
-        return 'abb2bf';
+        return 0xabb2bf;
     }
 
-    public function number(): string
+    public function number(): int
     {
-        return 'e5c07a';
+        return 0xe5c07a;
     }
 
-    public function function(): string
+    public function function(): int
     {
-        return '62aeef';
+        return 0x62aeef;
+    }
+
+    public function string(): int
+    {
+        return 0x98c379;
     }
 }

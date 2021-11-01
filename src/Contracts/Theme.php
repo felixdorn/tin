@@ -4,17 +4,19 @@ namespace Felix\Highlighter\Contracts;
 
 interface Theme
 {
-    public function keyword(): string;
+    public function keyword(): int;
 
-    public function variable(): string;
+    public function string(): int;
 
-    public function comment(): string;
+    public function variable(): int;
 
-    public function default(): string;
+    public function comment(): int;
 
-    public function string(): string;
+    public function default(): int;
 
-    public function function(): string;
+    public function int(): int;
 
-    public function number(): string;
+    public function function(): int;
+
+    public function number(): int;
 }

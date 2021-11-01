@@ -6,38 +6,43 @@ use Felix\Highlighter\Contracts\Theme;
 
 class JetbrainsDark implements Theme
 {
-    public function keyword(): string
+    public function keyword(): int
     {
-        return 'CC7832';
+        return 0xCC7832;
     }
 
-    public function variable(): string
+    public function variable(): int
     {
-        return '9876AA';
+        return 0x9876AA;
     }
 
-    public function string(): string
+    public function int(): int
     {
-        return '6A8759';
+        return 0x6A8759;
     }
 
-    public function comment(): string
+    public function comment(): int
     {
-        return '808080';
+        return 0x808080;
     }
 
-    public function default(): string
+    public function default(): int
     {
-        return 'A9B7C6';
+        return 0xA9B7C6;
     }
 
-    public function number(): string
+    public function number(): int
     {
-        return '6897BB';
+        return 0x6897BB;
     }
 
-    public function function(): string
+    public function function(): int
     {
-        return 'FFC66D';
+        return 0xFFC66D;
+    }
+
+    public function string(): int
+    {
+        return 0x6A8759;
     }
 }
