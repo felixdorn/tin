@@ -32,8 +32,6 @@ Yes, this comes from a terminal.
 use Felix\Tin\Themes\JetbrainsDark;
 use Felix\Tin\Tin;
 
-require __DIR__ . '/vendor/autoload.php';
-
 $theme = new JetbrainsDark();
 $tin = new Tin($theme);
 
