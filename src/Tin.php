@@ -26,11 +26,13 @@ class Tin
         $attributeOpen = false;
         foreach ($tokens as $index => $token) {
             if ($token->id !== T_STRING) {
-                $id = $token->id;
-
-                if ($attributeOpen && $token->text === ']' && $tokens[$index + 1]->id === T_WHITESPACE) {
+                if ($token->text === ':' && $tokens[$index - 1]->id === T_STRING) {
+                    $id = T_NAMED_PARAMETER;
+                } elseif ($attributeOpen && $token->text === ']' && ($tokens[$index + 1]->id === T_WHITESPACE || $tokens[$index + 1]->id === T_ATTRIBUTE)) {
                     $id            = T_ATTRIBUTE_END;
                     $attributeOpen = false;
+                } else {
+                    $id = $token->id;
                 }
             } elseif ($token->is(['true', 'false', 'null', 'string', 'int', 'float', 'object', 'callable', 'array', 'iterable', 'bool', 'self'])) {
                 $id = T_BUILTIN_TYPE;
@@ -52,6 +54,8 @@ class Tin
                     T_LNUMBER, T_DNUMBER => $this->theme->number,
                     T_VARIABLE, T_CONST_NAME, T_NUM_STRING, T_CLASS_C, T_METHOD_C, T_NS_C, T_FUNC_C, T_TRAIT_C, T_DIR, T_FILE, T_LINE => $this->theme->variable,
                     T_ATTRIBUTE, T_ATTRIBUTE_CLASS, T_ATTRIBUTE_END => $this->theme->attribute,
+                    T_NAMED_PARAMETER => $this->theme->namedParameter,
+                    // all keywords
                     T_ABSTRACT, T_ARRAY, T_FOREACH, T_AS, T_ECHO, T_TRY, T_CATCH, T_CLONE, T_CLOSE_TAG, T_SWITCH, T_CASE, T_BREAK, T_DEFAULT, T_OPEN_TAG, T_OPEN_TAG_WITH_ECHO, T_CLASS, T_PROTECTED, T_PUBLIC, T_PRIVATE, T_FUNCTION, T_NEW, T_RETURN, T_CONST, T_CONTINUE, T_DO, T_ELSE, T_IF, T_ELSEIF, T_EMPTY, T_WHILE, T_ENDDECLARE, T_ENDFOR, T_ENDFOREACH, T_ENDIF, T_ENDSWITCH, T_ENDWHILE, T_START_HEREDOC, T_END_HEREDOC, T_EXIT, T_EVAL, T_EXTENDS, T_FINALLY, T_FINAL, T_FOR, T_GLOBAL, T_GOTO, T_HALT_COMPILER, T_IMPLEMENTS, T_INCLUDE, T_REQUIRE, T_INSTANCEOF, T_INSTEADOF, T_INTERFACE, T_ISSET, T_LIST, T_LOGICAL_AND, T_LOGICAL_XOR, T_LOGICAL_OR, T_NAMESPACE, T_PRINT, T_REQUIRE_ONCE, T_INCLUDE_ONCE, T_STATIC, T_THROW, T_TRAIT, T_UNSET, T_USE, T_VAR, T_YIELD, T_YIELD_FROM, T_MATCH, T_FN, T_DECLARE, T_BUILTIN_TYPE, T_BOOL_CAST, T_ARRAY_CAST, T_DOUBLE_CAST, T_INT_CAST, T_UNSET_CAST, T_OBJECT_CAST, T_STRING_CAST => $this->theme->keyword,
                     default => $this->theme->default
                 };
@@ -63,7 +67,7 @@ class Tin
     }
 
     /**
-     * Find the real type of a T_STRING token which is one of :.
+     * Find the real type of T_STRING token which is one of :.
      *
      *  - T_CLASS_NAME
      *  - T_FUNCTION_DECL
@@ -80,6 +84,10 @@ class Tin
 
         if ($ahead->id === T_DOUBLE_COLON) {
             return T_CLASS_NAME;
+        }
+
+        if ($ahead->text === ':') {
+            return T_NAMED_PARAMETER;
         }
 
         $behind    = $this->read($tokens, $index - 1, ltr: false);

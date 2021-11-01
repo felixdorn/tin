@@ -35,3 +35,7 @@ if (!defined('T_ATTRIBUTE_CLASS')) {
 if (!defined('T_ATTRIBUTE_END')) {
     define('T_ATTRIBUTE_END', 10_000 + 256);
 }
+
+if (!defined('T_NAMED_PARAMETER')) {
+    define('T_NAMED_PARAMETER', 10_000 + 512);
+}

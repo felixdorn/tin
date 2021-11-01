@@ -12,6 +12,7 @@ class Theme
     public string $function;
     public string $number;
     public string $attribute;
+    public string $namedParameter;
 
     public function __get(string $name): string
     {

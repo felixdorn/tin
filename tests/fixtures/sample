@@ -90,12 +90,17 @@ namespace {
     $a = static function () {
     };
 
-    #[LanguageLevelTypeAware(['a' => 4], 1)]
+    #[LanguageLevelTypeAware(['a' => 4], 1)]#[A]
+    #[B]
     function a(A $a)
     {
     }
 
     $f = fn ($a): B => 1;
 
-    [A::class];
+    function foo(string $bar)
+    {
+    }
+
+    foo(bar: 'aa')[A::class];
 }
