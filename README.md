@@ -27,13 +27,17 @@ Yes, this comes from a terminal
 ## Usage
 
 ```php
-use \Felix\Tin\Tin;
-use \Felix\Tin\Themes\JetbrainsDark;
+<?php
 
-$theme = new JetbrainsDark()
+use Felix\Tin\Themes\JetbrainsDark;
+use Felix\Tin\Tin;
+
+require __DIR__ . '/vendor/autoload.php';
+
+$theme = new JetbrainsDark();
 $tin = new Tin($theme);
 
-$tin->process("<?php\n\necho 'Hello world';", ansi: true)
+echo $tin->process("<?php\n\necho 'Hello world';\n", ansi: true);
 ```
 
 You can disable the ansi output by passing `false` as the second parameter.
