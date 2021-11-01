@@ -42,8 +42,8 @@ You can disable the ansi output by passing `false` as the second parameter.
 
 ## Themes
 
-* JetbrainsDark `Felix\Tin\Themes\JetbrainsDark`
-* OneDark `Felix\Tin\Themes\OneDark`
+* [`Felix\Tin\Themes\JetbrainsDark`](src/Themes/JetbrainsDark.php)
+* [`Felix\Tin\Themes\OneDark`](src/Themes/OneDark.php)
 
 ### Creating a theme
 
