@@ -22,7 +22,7 @@ composer require felixdorn/tin
 
 ![A piece of code highlighted using tin](art/screenshot.png)
 
-Yes, this comes from a terminal
+Yes, this comes from a terminal.
 
 ## Usage
 
@@ -94,6 +94,14 @@ You can check the full profiles here:
 * Various outputs (cli / web)
 * Line prefixes aka support for line numbers
 * grayscale theme
+
+## Known Issues
+
+Named parameters are simply ignored by the built-in PHP parse which means that if you're named parameter is also a
+keyword such as for, default. The highlighter wont pick up on it and will highlight it as a keyword rather than a named
+parameter.
+
+There is no solution to that problem unless we implement our own parser (no) or the parser gets fixed,
 
 ## Testing
 
