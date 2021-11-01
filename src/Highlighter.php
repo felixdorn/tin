@@ -139,7 +139,7 @@ class Highlighter
                     T_COMMENT, T_DOC_COMMENT => $this->theme->comment(),
                     T_VARIABLE, T_CONST_NAME, T_NUM_STRING => $this->theme->variable(),
                     T_LNUMBER, T_DNUMBER => $this->theme->number(),
-                    T_METHOD_NAME => $this->theme->function(),
+                    T_METHOD_NAME, T_FUNCTION_DECL => $this->theme->function(),
                     default       => $this->theme->default()
                 };
             }

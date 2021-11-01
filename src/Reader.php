@@ -98,7 +98,7 @@ class Reader
                 return T_METHOD_NAME;
             }
 
-            return T_FUNCTION_NAME;
+            return T_FUNCTION_DECL;
         }
 
         if (in_array($behind[0], [T_NEW, T_USE, T_PRIVATE, T_NAMESPACE, T_PROTECTED, T_PUBLIC, T_CLASS, T_EXTENDS, T_IMPLEMENTS, T_INSTEADOF])) {

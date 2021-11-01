@@ -75,3 +75,7 @@ if (!defined('T_METHOD_NAME')) {
 if (!defined('T_NULL')) {
     define('T_NULL', 19);
 }
+
+if (!defined('T_FUNCTION_DECL')) {
+    define('T_FUNCTION_DECL', 20);
+}
