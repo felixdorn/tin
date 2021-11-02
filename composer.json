@@ -1,6 +1,6 @@
 {
     "name": "felixdorn/tin",
-    "description": "tin is a high-performance code highlighter for the terminal.\n",
+    "description": "tin is a PHP code highlighter for the terminal.",
     "license": "MIT",
     "authors": [
         {
