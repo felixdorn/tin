@@ -2,26 +2,28 @@
 
 use Felix\Tin\Themes\OneDark;
 use Felix\Tin\Tin;
+use Felix\Tin\Token;
 use PHPUnit\Framework\TestCase;
 use function Spatie\Snapshots\assertMatchesTextSnapshot;
 
 uses(TestCase::class);
 
 it('can highlight', function () {
-    $Tin = new Tin(
-        new OneDark()
-    );
+    $tin = Tin::from(new OneDark());
 
-    $hl = $Tin->process(
-        file_get_contents(__DIR__ . '/fixtures/sample') ?: throw new RuntimeException('can not read sample file'),
+    $hl = $tin->highlight(
+        file_get_contents(__DIR__ . '/fixtures/sample'),
     );
 
     assertMatchesTextSnapshot($hl);
 });
 
-it('does not highlight with ANSI disabled', function () {
-    $code = file_get_contents(__DIR__ . '/fixtures/sample');
-    $hl = new Felix\Tin\Tin(new OneDark());
+it('can customize highlighting output', function () {
+    $tin = Tin::from(new OneDark());
 
-    expect($hl->process($code, false))->toBe($code);
+    $output = $tin->process('<?php echo "Hello world";', function (Token $token, Token $lastToken) {
+        return $token->id;
+    });
+
+    expect($output)->toBe(T_OPEN_TAG . T_ECHO . T_WHITESPACE . T_CONSTANT_ENCAPSED_STRING . ord(';'));
 });

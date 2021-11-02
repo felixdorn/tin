@@ -3,7 +3,6 @@
 namespace Felix\Tin;
 
 use Felix\Tin\Themes\Theme;
-use PhpToken;
 
 class Tin
 {
@@ -14,40 +13,44 @@ class Tin
         $this->theme = $theme;
     }
 
-    public function process(string $code, bool $ansi = true): string
+    public static function from(Theme $theme): self
     {
-        if (!$ansi) {
-            return $code;
-        }
+        return new self($theme);
+    }
 
-        $highlighted = '';
-        $tokens      = PhpToken::tokenize($code);
+    public function highlight(string $code): string
+    {
+        return $this->process($code, function (Token $token): string {
+            return $token->text;
+        });
+    }
 
+    public function process(string $code, callable $transformer): string
+    {
+        $highlighted   = '';
+        $lastToken     = $tokens[array_key_last($tokens)];
+        $tokens        = Token::tokenize($code);
         $attributeOpen = false;
         foreach ($tokens as $index => $token) {
             if ($token->id !== T_STRING) {
-                if ($token->text === ':' && $tokens[$index - 1]->id === T_STRING) {
-                    $id = T_NAMED_PARAMETER;
+                if ($token->text === ':' && $tokens[$index - 1]->id === T_NAMED_PARAMETER) {
+                    $token->id = T_NAMED_PARAMETER;
                 } elseif ($attributeOpen && $token->text === ']' && ($tokens[$index + 1]->id === T_WHITESPACE || $tokens[$index + 1]->id === T_ATTRIBUTE)) {
-                    $id            = T_ATTRIBUTE_END;
+                    $token->id     = T_ATTRIBUTE_END;
                     $attributeOpen = false;
-                } else {
-                    $id = $token->id;
+                } elseif ($token->id === T_ATTRIBUTE) {
+                    $attributeOpen = true;
                 }
             } elseif ($token->is(['true', 'false', 'null', 'string', 'int', 'float', 'object', 'callable', 'array', 'iterable', 'bool', 'self'])) {
-                $id = T_BUILTIN_TYPE;
+                $token->id = T_BUILTIN_TYPE;
             } else {
-                $id = $this->idFromContext($tokens, $index);
+                $token->id = $this->idFromContext($tokens, $index);
             }
 
-            if ($id === T_ATTRIBUTE) {
-                $attributeOpen = true;
-            }
-
-            if ($id < 256) {
+            if ($token->id < 256) {
                 $color = $this->theme->default;
             } else {
-                $color = match ($id) {
+                $color = match ($token->id) {
                     T_METHOD_NAME, T_FUNCTION_DECL => $this->theme->function,
                     T_COMMENT, T_DOC_COMMENT => $this->theme->comment,
                     T_CONSTANT_ENCAPSED_STRING, T_ENCAPSED_AND_WHITESPACE => $this->theme->string,
@@ -60,7 +63,11 @@ class Tin
                     default => $this->theme->default
                 };
             }
-            $highlighted .= "\e[38;2;" . $color . 'm' . $token->text . "\e[0m";
+
+            $text        = $token->text;
+            $token->text = "\e[38;2;" . $color . 'm' . $token->text . "\e[0m";
+            $highlighted .= $transformer($token, $lastToken);
+            $token->text = $text;
         }
 
         return $highlighted;
@@ -76,12 +83,11 @@ class Tin
      *  - T_VARIABLE
      *  - T_DECLARE_PARAMETER
      *
-     * @param array<int, PhpToken> $tokens
+     * @param array<int, Token> $tokens
      */
     protected function idFromContext(array $tokens, int $index): int
     {
-        $ahead = $this->read($tokens, $index + 1);
-
+        $ahead = $this->lookAhead($tokens, $index + 1);
         if ($ahead->id === T_DOUBLE_COLON) {
             return T_CLASS_NAME;
         }
@@ -90,21 +96,17 @@ class Tin
             return T_NAMED_PARAMETER;
         }
 
-        $behind    = $this->read($tokens, $index - 1, ltr: false);
-        $twoBehind = $this->read($tokens, $index - 2, ltr: false);
+        $behind    = $this->lookBehind($tokens, $index - 1);
+        $twoBehind = $this->lookBehind($tokens, $index - 2);
 
         return match ($behind->id) {
-            T_NEW, T_USE, T_PRIVATE, T_PROTECTED, T_PUBLIC, T_NAMESPACE, T_CLASS, T_INTERFACE, T_TRAIT, T_EXTENDS, T_IMPLEMENTS, T_INSTEADOF => T_CLASS_NAME,
+            T_NEW, T_USE, T_PRIVATE, T_PROTECTED, T_PUBLIC, T_NAMESPACE, T_CLASS, T_INTERFACE, T_TRAIT, T_EXTENDS, T_IMPLEMENTS, T_INSTEADOF, 58, 124, 63, 44 => T_CLASS_NAME,
             T_FUNCTION        => $twoBehind->is([T_PRIVATE, T_PROTECTED, T_PUBLIC, T_STATIC]) ? T_METHOD_NAME : T_FUNCTION_DECL,
             T_OBJECT_OPERATOR => $ahead->text === '(' ? T_METHOD_NAME : T_VARIABLE,
             T_DOUBLE_COLON    => $ahead->text === '(' || $ahead->id === T_INSTEADOF || $ahead->id === T_AS ? T_METHOD_NAME : T_CONST_NAME,
             T_AS              => T_METHOD_NAME,
             T_ATTRIBUTE       => T_ATTRIBUTE_CLASS,
-            default           => (function () use ($behind, $ahead, $twoBehind, $tokens, $index) {
-                if ($behind->is([':', '|', '?', ','])) {
-                    return T_CLASS_NAME;
-                }
-
+            default           => (function () use ($ahead, $twoBehind, $tokens, $index) {
                 if ($ahead->text === '(') {
                     return T_FUNCTION_NAME;
                 }
@@ -115,8 +117,8 @@ class Tin
 
                 // public function foo(Bar $bar)
                 // 6     54       32  0
-                // This is where the -4 comes from
-                if ($this->read($tokens, $index - 4, ltr: false)->is(T_FUNCTION)) {
+                // This is where the $index - 4 comes from
+                if ($this->lookBehind($tokens, $index - 4)->is(T_FUNCTION)) {
                     return T_CLASS_NAME;
                 }
 
@@ -127,16 +129,32 @@ class Tin
     }
 
     /**
-     * Finds the nearest non-whitespace token at a given index in a given direction (either ltr or rtl).
+     * Finds the nearest non-whitespace token at a given index from left to right.
      *
-     * @param array<int, PhpToken> $tokens
+     * @param array<int, Token> $tokens
      */
-    protected function read(array $tokens, int $index, bool $ltr = true): PhpToken
+    protected function lookAhead(array $tokens, int $index): Token
     {
         $token = $tokens[$index];
 
         if ($token->id === T_WHITESPACE) {
-            $token = $tokens[$index + ($ltr ? 1 : -1)];
+            $token = $tokens[$index + 1];
+        }
+
+        return $token;
+    }
+
+    /**
+     * Finds the nearest non-whitespace token at a given index from right to left.
+     *
+     * @param array<int, Token> $tokens
+     */
+    protected function lookBehind(array $tokens, int $index): Token
+    {
+        $token = $tokens[$index];
+
+        if ($token->id === T_WHITESPACE) {
+            $token = $tokens[$index - 1];
         }
 
         return $token;

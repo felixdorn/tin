@@ -35,10 +35,23 @@ use Felix\Tin\Tin;
 $theme = new JetbrainsDark();
 $tin = new Tin($theme);
 
-echo $tin->process("<?php\n\necho 'Hello world';\n", ansi: true);
+echo $tin->highlight("<?php\n\necho 'Hello world';\n");
 ```
 
 You can disable the ansi output by passing `false` as the second parameter.
+
+## Customizing the output
+
+Apart from using a custom theme to change the colors, you have complete control over the highlighting proccess.
+
+```php
+use Felix\Tin\Token;
+
+$tin->process(
+    $code,
+    fn(Token $token, Token $lastToken) => $token->line . '| ' . $token->repr()
+)
+```
 
 ## Themes
 
@@ -68,35 +81,16 @@ class OneDark extends Theme
 }
 ```
 
-## Performance
-
-The code has been optimized a lot as i needed to highlight files quickly. Therefore, some compromise were made in terms
-of code readability and simplicity.
-
-It takes on average 0.0007 second per file.
-
-To put that in context, highlighting the whole PHPUnit library takes ~265ms.
-
-Highlighting the vendor directory of this package takes ~1.78s. That's 1320 files per seconds.
-
-> PHP built-in tokenizer for PHP uses most of the memory (around 80-90%)
-
-You can check the full profiles here:
-
-* [Highlighting PHPUnit](https://blackfire.io/profiles/2bd4c150-5226-4645-85fa-ffed43dc4602/graph)
-* [Highlighting Vendor](https://blackfire.io/profiles/fa9b900f-d398-4efa-b999-9e7470b714b4/graph)
-
 ## Future
 
 * PHPDoc
 * Various outputs (cli / web)
-* Line prefixes aka support for line numbers
 * grayscale theme
 
 ## Known Issues
 
 Named parameters are simply ignored by the built-in PHP parse which means that if you're named parameter is also a
-keyword such as for, default. The highlighter wont pick up on it and will highlight it as a keyword rather than a named
+keyword such as for, default. The highlighter won't pick up on it and will highlight it as a keyword rather than a named
 parameter.
 
 There is no solution to that problem unless we implement our own parser (no) or the parser gets fixed,
