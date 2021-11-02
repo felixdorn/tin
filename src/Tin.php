@@ -28,8 +28,8 @@ class Tin
     public function process(string $code, callable $transformer): string
     {
         $highlighted   = '';
-        $lastToken     = $tokens[array_key_last($tokens)];
         $tokens        = Token::tokenize($code);
+        $lastToken     = $tokens[array_key_last($tokens)];
         $attributeOpen = false;
         foreach ($tokens as $index => $token) {
             if ($token->id !== T_STRING) {

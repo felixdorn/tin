@@ -2,8 +2,8 @@
 
 tin is a PHP code highlighter for the terminal. 
  
-[![Tests](https://github.com/felixdorn/tin/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/felixdorn/tin/actions/workflows/tests.yml)
-[![Formats](https://github.com/felixdorn/tin/actions/workflows/formats.yml/badge.svg?branch=master)](https://github.com/felixdorn/tin/actions/workflows/formats.yml)
+[![Tests](https://github.com/felixdorn/tin/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/felixdorn/tin/actions/workflows/tests.yml)
+[![Formats](https://github.com/felixdorn/tin/actions/workflows/formats.yml/badge.svg?branch=main)](https://github.com/felixdorn/tin/actions/workflows/formats.yml)
 [![Version](https://poser.pugx.org/felixdorn/tin/version)](//packagist.org/packages/felixdorn/tin)
 [![Total Downloads](https://poser.pugx.org/felixdorn/tin/downloads)](//packagist.org/packages/felixdorn/tin)
 [![License](https://poser.pugx.org/felixdorn/tin/license)](//packagist.org/packages/felixdorn/tin)
