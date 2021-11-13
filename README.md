@@ -89,7 +89,7 @@ class OneDark extends Theme
 
 ## Known Issues
 
-Named parameters are simply ignored by the built-in PHP parse which means that if you're named parameter is also a
+Named parameters are simply ignored by the built-in PHP parseR which means that if you're named parameter is also a
 keyword such as for, default. The highlighter won't pick up on it and will highlight it as a keyword rather than a named
 parameter.
 
