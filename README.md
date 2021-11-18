@@ -38,8 +38,6 @@ $tin = new Tin($theme);
 echo $tin->highlight("<?php\n\necho 'Hello world';\n");
 ```
 
-You can disable the ansi output by passing `false` as the second parameter.
-
 ## Customizing the output
 
 Apart from using a custom theme to change the colors, you have complete control over the highlighting proccess.
