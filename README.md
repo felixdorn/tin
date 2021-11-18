@@ -51,6 +51,8 @@ $tin->process(
 )
 ```
 
+> Last token represents the last token in the input code, it is very useful as you can then get the number of lines in the code with `$lastToken->line` to properly indent line numbers for example.  
+
 ## Themes
 
 * [`Felix\Tin\Themes\JetbrainsDark`](src/Themes/JetbrainsDark.php)
