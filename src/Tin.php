@@ -6,11 +6,8 @@ use Felix\Tin\Themes\Theme;
 
 class Tin
 {
-    protected Theme $theme;
-
-    public function __construct(Theme $theme)
+    public function __construct(protected Theme $theme)
     {
-        $this->theme = $theme;
     }
 
     public static function from(Theme $theme): self
