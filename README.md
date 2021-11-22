@@ -47,7 +47,7 @@ use Felix\Tin\Token;
 
 $tin->process(
     $code,
-    fn(Token $token, Token $lastToken) => $token->line . '| ' . $token->repr()
+    fn(Token $token, Token $lastToken) => $token->line . '| ' . $token->text
 )
 ```
 
