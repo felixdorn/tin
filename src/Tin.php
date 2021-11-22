@@ -17,26 +17,24 @@ class Tin
 
     public function highlight(string $code): string
     {
-        return $this->process($code, function (Token $token): string {
-            return $token->text;
-        });
+        return $this->process($code, fn (Token $token) => $token->text);
     }
 
     public function process(string $code, callable $transformer): string
     {
         $highlighted   = '';
         $tokens        = Token::tokenize($code);
-        $lastToken     = $tokens[array_key_last($tokens)];
-        $attributeOpen = false;
+        $inAttribute = false;
+        $lastToken = $tokens[array_key_last($tokens)];
         foreach ($tokens as $index => $token) {
             if ($token->id !== T_STRING) {
                 if ($token->text === ':' && $tokens[$index - 1]->id === T_NAMED_PARAMETER) {
                     $token->id = T_NAMED_PARAMETER;
-                } elseif ($attributeOpen && $token->text === ']' && ($tokens[$index + 1]->id === T_WHITESPACE || $tokens[$index + 1]->id === T_ATTRIBUTE)) {
+                } elseif ($inAttribute && $token->text === ']' && ($tokens[$index + 1]->id === T_WHITESPACE || $tokens[$index + 1]->id === T_ATTRIBUTE)) {
                     $token->id     = T_ATTRIBUTE_END;
-                    $attributeOpen = false;
+                    $inAttribute = false;
                 } elseif ($token->id === T_ATTRIBUTE) {
-                    $attributeOpen = true;
+                    $inAttribute = true;
                 }
             } elseif ($token->is(['true', 'false', 'null', 'string', 'int', 'float', 'object', 'callable', 'array', 'iterable', 'bool', 'self'])) {
                 $token->id = T_BUILTIN_TYPE;
@@ -44,6 +42,8 @@ class Tin
                 $token->id = $this->idFromContext($tokens, $index);
             }
 
+            // token with ids lower than 256 are equal to ord($token->text) 
+            // and will never be colorized as they are things like ;{}()[] 
             if ($token->id < 256) {
                 $color = $this->theme->default;
             } else {
@@ -71,7 +71,7 @@ class Tin
     }
 
     /**
-     * Find the real type of T_STRING token which is one of :.
+     * Find the real type of T_STRING token which is one of :
      *
      *  - T_CLASS_NAME
      *  - T_FUNCTION_DECL
