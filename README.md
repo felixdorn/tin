@@ -86,7 +86,7 @@ class OneDark extends Theme
 * PHPDoc
 * Various outputs (cli / web)
 * grayscale theme
-
+* better themes (will also boost performances a lot!!)
 ## Known Issues
 
 Named parameters are simply ignored by the built-in PHP parser which means that if you're named parameter is also a
