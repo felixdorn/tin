@@ -53,7 +53,7 @@ $tin->process(
            return null;
         }
         
-        return $token->line . '| ' . $token->text;
+        return $token->text;
     }
 )
 ```
