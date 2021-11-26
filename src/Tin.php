@@ -61,9 +61,14 @@ class Tin
                 };
             }
 
-            $text        = $token->text;
-            $token->text = "\e[38;2;" . $color . 'm' . $token->text . "\e[0m";
-            $highlighted .= $transformer($token, $lastToken);
+            $text             = $token->text;
+            $token->text      = "\e[38;2;" . $color . 'm' . $token->text . "\e[0m";
+            $highlightedToken = $transformer($token, $lastToken);
+
+            if ($highlightedToken !== null) {
+                $highlighted .= $highlightedToken;
+            }
+
             $token->text = $text;
         }
 

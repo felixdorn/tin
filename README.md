@@ -1,7 +1,7 @@
 # tin
 
-tin is a PHP code highlighter for the terminal. 
- 
+tin is a PHP code highlighter for the terminal.
+
 [![Tests](https://github.com/felixdorn/tin/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/felixdorn/tin/actions/workflows/tests.yml)
 [![Formats](https://github.com/felixdorn/tin/actions/workflows/formats.yml/badge.svg?branch=main)](https://github.com/felixdorn/tin/actions/workflows/formats.yml)
 [![Version](https://poser.pugx.org/felixdorn/tin/version)](//packagist.org/packages/felixdorn/tin)
@@ -47,11 +47,21 @@ use Felix\Tin\Token;
 
 $tin->process(
     $code,
-    fn(Token $token, Token $lastToken) => $token->line . '| ' . $token->text
+    function(Token $token, Token $lastToken): ?string  {
+        // won't print any of the ";" tokens
+        if ($token->is(";")) {
+           return null;
+        }
+        
+        return $token->line . '| ' . $token->text;
+    }
 )
 ```
 
-> Last token represents the last token in the input code, it is very useful as you can then get the number of lines in the code with `$lastToken->line` to properly indent line numbers for example.  
+Last token represents the last token in the input code, it is very useful as you can then get the number of lines in the
+code with `$lastToken->line` to properly indent line numbers for example.
+
+If you return `null` from the callback, the token will be skipped.
 
 ## Themes
 
@@ -87,6 +97,7 @@ class OneDark extends Theme
 * Various outputs (cli / web)
 * grayscale theme
 * better themes (will also boost performances a lot!!)
+
 ## Known Issues
 
 Named parameters are simply ignored by the built-in PHP parser which means that if you're named parameter is also a

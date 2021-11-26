@@ -27,3 +27,17 @@ it('can customize highlighting output', function () {
 
     expect($output)->toBe(T_OPEN_TAG . T_ECHO . T_WHITESPACE . T_CONSTANT_ENCAPSED_STRING . ord(';'));
 });
+
+it('can skip tokens', function () {
+    $tin = Tin::from(new OneDark());
+
+    $output = $tin->process('<?php echo "Hello world";', function (Token $token, Token $lastToken) {
+        if ($token->id === T_ECHO) {
+            return null;
+        }
+
+        return $token->id;
+    });
+
+    expect($output)->toBe(T_OPEN_TAG . T_WHITESPACE . T_CONSTANT_ENCAPSED_STRING . ord(';'));
+});
