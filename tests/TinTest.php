@@ -41,3 +41,13 @@ it('can skip tokens', function () {
 
     expect($output)->toBe(T_OPEN_TAG . T_WHITESPACE . T_CONSTANT_ENCAPSED_STRING . ord(';'));
 });
+
+it('marks the first tokens in a line as first', function () {
+    $tin = Tin::from(new OneDark());
+
+    $output = $tin->process('<?php echo "Hello world";', function (Token $token, Token $lastToken) {
+        return $token->firstInLine ? 'y' : 'n';
+    });
+
+    expect($output)->toBe('ynnnn');
+});

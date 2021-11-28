@@ -53,6 +53,10 @@ $tin->process(
            return null;
         }
         
+        if ($token->firstInLine) {
+            return $token->line . '| ' . $token->text;
+        }
+        
         return $token->text;
     }
 )

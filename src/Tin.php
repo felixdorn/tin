@@ -22,16 +22,18 @@ class Tin
 
     public function process(string $code, callable $transformer): string
     {
-        $highlighted   = '';
-        $tokens        = Token::tokenize($code);
+        $highlighted = '';
+        $tokens      = Token::tokenize($code);
         $inAttribute = false;
-        $lastToken = $tokens[array_key_last($tokens)];
+        $lastToken   = $tokens[array_key_last($tokens)];
+
+        $lastLine = -1;
         foreach ($tokens as $index => $token) {
             if ($token->id !== T_STRING) {
                 if ($token->text === ':' && $tokens[$index - 1]->id === T_NAMED_PARAMETER) {
                     $token->id = T_NAMED_PARAMETER;
                 } elseif ($inAttribute && $token->text === ']' && ($tokens[$index + 1]->id === T_WHITESPACE || $tokens[$index + 1]->id === T_ATTRIBUTE)) {
-                    $token->id     = T_ATTRIBUTE_END;
+                    $token->id   = T_ATTRIBUTE_END;
                     $inAttribute = false;
                 } elseif ($token->id === T_ATTRIBUTE) {
                     $inAttribute = true;
@@ -42,8 +44,8 @@ class Tin
                 $token->id = $this->idFromContext($tokens, $index);
             }
 
-            // token with ids lower than 256 are equal to ord($token->text) 
-            // and will never be colorized as they are things like ;{}()[] 
+            // token with ids lower than 256 are equal to ord($token->text)
+            // and will never be colorized as they are things like ;{}()[]
             if ($token->id < 256) {
                 $color = $this->theme->default;
             } else {
@@ -61,8 +63,11 @@ class Tin
                 };
             }
 
-            $text             = $token->text;
-            $token->text      = "\e[38;2;" . $color . 'm' . $token->text . "\e[0m";
+            $text                 = $token->text;
+            $token->text          = "\e[38;2;" . $color . 'm' . $token->text . "\e[0m";
+            $token->firstInLine = $lastLine !== $token->line;
+            $lastLine             = $token->line;
+
             $highlightedToken = $transformer($token, $lastToken);
 
             if ($highlightedToken !== null) {
@@ -76,7 +81,7 @@ class Tin
     }
 
     /**
-     * Find the real type of T_STRING token which is one of :
+     * Find the real type of T_STRING token which is one of :.
      *
      *  - T_CLASS_NAME
      *  - T_FUNCTION_DECL
