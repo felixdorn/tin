@@ -13,7 +13,7 @@ class Tin
     /** @param Theme|class-string $theme */
     public static function from(Theme|string $theme): self
     {
-        return new self(is_string($theme) ? new $theme : $theme);
+        return new self(is_string($theme) ? new $theme() : $theme);
     }
 
     public function highlight(string $code): string
