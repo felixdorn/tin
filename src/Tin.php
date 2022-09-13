@@ -10,7 +10,7 @@ class Tin
     {
     }
 
-    /** @param Theme|class-string $theme */
+    /** @param Theme|class-string<Theme> $theme */
     public static function from(Theme|string $theme): self
     {
         return new self(is_string($theme) ? new $theme() : $theme);
