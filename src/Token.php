@@ -6,5 +6,4 @@ use PhpToken;
 
 class Token extends PhpToken
 {
-    public bool $firstInLine = false;
 }

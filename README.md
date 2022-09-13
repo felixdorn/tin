@@ -43,23 +43,20 @@ echo $tin->highlight("<?php\n\necho 'Hello world';\n");
 Apart from using a custom theme to change the colors, you have complete control over the highlighting proccess.
 
 ```php
-use Felix\Tin\Token;
-
 $tin->process(
     $code,
-    function(Token $token, Token $lastToken): ?string  {
-        // won't print any of the ";" tokens
-        if ($token->is(";")) {
-           return null;
-        }
-        
-        if ($token->firstInLine) {
-            return $token->line . '| ' . $token->text;
-        }
-        
-        return $token->text;
+    function (int $line, array $tokens, int $lineCount): ?string {
+        $lineNumber = sprintf(
+            "\e[38;2;%sm%s | \e[0m",
+            $this->theme->comment,
+            str_pad($line, strlen($lineCount),
+                ' ',
+                STR_PAD_LEFT
+            ));
+
+        return $lineNumber . implode('', $tokens) . PHP_EOL;
     }
-)
+);
 ```
 
 Last token represents the last token in the input code, it is very useful as you can then get the number of lines in the

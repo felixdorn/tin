@@ -17,17 +17,28 @@ class Tin
 
     public function highlight(string $code): string
     {
-        return $this->process($code, fn (Token $token) => $token->text);
+        return $this->process($code, function (int $line, array $tokens, int $lineCount) {
+            $lineNumber = sprintf(
+                "\e[38;2;%sm%s | \e[0m",
+                $this->theme->comment,
+                str_pad(
+                    $line,
+                    strlen($lineCount),
+                    ' ',
+                    STR_PAD_LEFT
+                ));
+
+            return $lineNumber . implode('', $tokens) . PHP_EOL;
+        });
     }
 
     public function process(string $code, callable $transformer): string
     {
-        $highlighted = '';
-        $tokens      = Token::tokenize($code);
+        $code        = rtrim($code);
+        $highlighted = array_fill(0, substr_count($code, PHP_EOL) - 1, []);
+        $tokens      = $this->reindex(Token::tokenize($code));
         $inAttribute = false;
-        $lastToken   = $tokens[array_key_last($tokens)];
 
-        $lastLine = -1;
         foreach ($tokens as $index => $token) {
             if ($token->id !== T_STRING) {
                 if ($token->text === ':' && $tokens[$index - 1]->id === T_NAMED_PARAMETER) {
@@ -63,21 +74,35 @@ class Tin
                 };
             }
 
-            $text                 = $token->text;
-            $token->text          = "\e[38;2;" . $color . 'm' . $token->text . "\e[0m";
-            $token->firstInLine = $lastLine !== $token->line;
-            $lastLine             = $token->line;
+            $token->text = "\e[38;2;" . $color . 'm' . $token->text . "\e[0m";
 
-            $highlightedToken = $transformer($token, $lastToken);
-
-            if ($highlightedToken !== null) {
-                $highlighted .= $highlightedToken;
-            }
-
-            $token->text = $text;
+            $highlighted[$token->line - 1][] = $token;
         }
 
-        return $highlighted;
+        return array_reduce(array_keys($highlighted), fn (string $_, int $line) => $_ . $transformer(...)->call($this, $line, $highlighted[$line], count($highlighted)), '');
+    }
+
+    private function reindex(array $tokens): array
+    {
+        $indexed = [];
+        $line    = 1;
+
+        foreach ($tokens as $token) {
+            $splits   = explode("\n", $token->text);
+            $newLines = count($splits) - 1;
+
+            foreach ($splits as $split) {
+                if ($split === '' && $newLines > 0) {
+                    $line++;
+                    $newLines--;
+                    continue;
+                }
+
+                $indexed[] = new Token($token->id, $split, $line);
+            }
+        }
+
+        return $indexed;
     }
 
     /**
