@@ -22,8 +22,8 @@ class Tin
                 "\e[38;2;%sm%s | \e[0m",
                 $this->theme->comment,
                 str_pad(
-                    $line,
-                    strlen($lineCount),
+                    (string) $line,
+                    strlen((string) $lineCount),
                     ' ',
                     STR_PAD_LEFT
                 ));
@@ -35,7 +35,7 @@ class Tin
     public function process(string $code, callable $transformer): string
     {
         $code        = rtrim($code);
-        $highlighted = array_fill(0, substr_count($code, PHP_EOL) - 1, []);
+        $highlighted = array_fill(1, substr_count($code, PHP_EOL) + 1, []);
         $tokens      = $this->reindex(Token::tokenize($code));
         $inAttribute = false;
 
@@ -74,12 +74,14 @@ class Tin
                 };
             }
 
-            $token->text = "\e[38;2;" . $color . 'm' . $token->text . "\e[0m";
-
-            $highlighted[$token->line - 1][] = $token;
+            $highlighted[$token->line][] = "\e[38;2;" . $color . 'm' . $token->text . "\e[0m";
         }
 
-        return array_reduce(array_keys($highlighted), fn (string $_, int $line) => $_ . $transformer(...)->call($this, $line, $highlighted[$line], count($highlighted)), '');
+        return array_reduce(
+            array_keys($highlighted),
+            fn (string $_, int|string $line) => $_ . $transformer(...)->call($this, (int) $line, $highlighted[(int) $line], count($highlighted)),
+            ''
+        );
     }
 
     private function reindex(array $tokens): array

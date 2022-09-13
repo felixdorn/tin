@@ -52,7 +52,8 @@ $tin->process(
             str_pad($line, strlen($lineCount),
                 ' ',
                 STR_PAD_LEFT
-            ));
+            )
+        );
 
         return $lineNumber . implode('', $tokens) . PHP_EOL;
     }
