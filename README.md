@@ -10,7 +10,7 @@ tin is a PHP code highlighter for the terminal.
 
 ## Installation
 
-> Requires [PHP 8.0.0+](https://php.net/releases)
+> Requires [PHP 8.1+](https://php.net/releases)
 
 You can install the package via composer:
 
@@ -32,10 +32,7 @@ Yes, this comes from a terminal.
 use Felix\Tin\Themes\JetbrainsDark;
 use Felix\Tin\Tin;
 
-$theme = new JetbrainsDark();
-$tin = new Tin($theme);
-
-echo $tin->highlight("<?php\n\necho 'Hello world';\n");
+echo Tin::from(JetbrainsDark::class)->highlight("<?php\n\necho 'Hello world';\n");
 ```
 
 ## Customizing the output

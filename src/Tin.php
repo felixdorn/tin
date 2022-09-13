@@ -10,9 +10,10 @@ class Tin
     {
     }
 
-    public static function from(Theme $theme): self
+    /** @param Theme|class-string $theme */
+    public static function from(Theme|string $theme): self
     {
-        return new self($theme);
+        return new self(is_string($theme) ? new $theme : $theme);
     }
 
     public function highlight(string $code): string
