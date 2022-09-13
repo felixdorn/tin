@@ -57,11 +57,6 @@ $tin->process(
 );
 ```
 
-Last token represents the last token in the input code, it is very useful as you can then get the number of lines in the
-code with `$lastToken->line` to properly indent line numbers for example.
-
-If you return `null` from the callback, the token will be skipped.
-
 ## Themes
 
 * [`Felix\Tin\Themes\JetbrainsDark`](src/Themes/JetbrainsDark.php)
@@ -95,7 +90,6 @@ class OneDark extends Theme
 * PHPDoc
 * Various outputs (cli / web)
 * grayscale theme
-* better themes (will also boost performances a lot!!)
 
 ## Known Issues
 
