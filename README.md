@@ -57,6 +57,8 @@ $tin->process(
 );
 ```
 
+> Returning null skips the line entirely.
+
 ## Themes
 
 * [`Felix\Tin\Themes\JetbrainsDark`](src/Themes/JetbrainsDark.php)

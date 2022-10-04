@@ -80,7 +80,16 @@ class Tin
 
         return array_reduce(
             array_keys($highlighted),
-            fn (string $_, int|string $line) => $_ . $transformer(...)->call($this, (int) $line, $highlighted[(int) $line], count($highlighted)),
+            function (string $_, int|string $line) use ($transformer, $highlighted) {
+                $line = $transformer(...)->call(
+                    $this,
+                    (int) $line,
+                    $highlighted[(int) $line],
+                    count($highlighted),
+                );
+
+                return $line !== null ? $_ . $line : $_;
+            },
             ''
         );
     }
