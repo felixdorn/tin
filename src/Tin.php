@@ -56,8 +56,8 @@ class Tin
                 $token->id = $this->idFromContext($tokens, $index);
             }
 
-            // token with ids lower than 256 are equal to ord($token->text)
-            // and will never be colorized as they are things like ;{}()[]
+            // A token with an id lower than 256 is equal to ord($token->text)
+            // and will never be colorized as it will be something like: ;{}()[]
             if ($token->id < 256) {
                 $color = $this->theme->default;
             } else {
