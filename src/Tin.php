@@ -33,11 +33,11 @@ class Tin
         });
     }
 
-    public function process(string $code, callable $transformer): string
+    public function process(string $code, callable $transformer, int $start = 0, int $end = -1): string
     {
-        $code        = rtrim($code);
+        $code        = rtrim(str_replace(["\r\n", "\r"], "\n", $code));
         $highlighted = array_fill(1, substr_count($code, PHP_EOL) + 1, []);
-        $tokens      = $this->reindex(Token::tokenize($code));
+        $tokens      = $this->reindex(Token::tokenize($code), $start, $end);
         $inAttribute = false;
 
         foreach ($tokens as $index => $token) {
@@ -94,7 +94,7 @@ class Tin
         );
     }
 
-    private function reindex(array $tokens): array
+    private function reindex(array $tokens, int $start, int $end): array
     {
         $indexed = [];
         $line    = 1;
@@ -111,10 +111,14 @@ class Tin
                 }
 
                 $indexed[] = new Token($token->id, $split, $line);
+
+                if ($end !== -1 && count($indexed) === $end) {
+                    return $indexed;
+                }
             }
         }
 
-        return $indexed;
+        return array_slice($tokens, $start, $end === -1 ? null : $end);
     }
 
     /**
