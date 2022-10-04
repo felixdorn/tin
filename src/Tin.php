@@ -81,11 +81,11 @@ class Tin
         return array_reduce(
             array_keys($highlighted),
             function (string $_, int|string $line) use ($transformer, $highlighted) {
-                $line = $transformer(...)->call(
-                    $this,
+                $line = $transformer(
                     (int)$line,
                     $highlighted[(int)$line],
                     count($highlighted),
+                    $this->theme
                 );
 
                 return $line !== null ? $_ . $line : $_;
