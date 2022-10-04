@@ -23,8 +23,8 @@ class Tin
                 "\e[38;2;%sm%s | \e[0m",
                 $this->theme->comment,
                 str_pad(
-                    (string) $line,
-                    strlen((string) $lineCount),
+                    (string)$line,
+                    strlen((string)$lineCount),
                     ' ',
                     STR_PAD_LEFT
                 ));
@@ -33,11 +33,11 @@ class Tin
         });
     }
 
-    public function process(string $code, callable $transformer, int $start = 0, int $end = -1): string
+    public function process(string $code, callable $transformer): string
     {
-        $code        = rtrim(str_replace(["\r\n", "\r"], "\n", $code));
+        $code = rtrim(str_replace(["\r\n", "\r"], "\n", $code));
         $highlighted = array_fill(1, substr_count($code, PHP_EOL) + 1, []);
-        $tokens      = $this->reindex(Token::tokenize($code), $start, $end);
+        $tokens = $this->tokenize($code);
         $inAttribute = false;
 
         foreach ($tokens as $index => $token) {
@@ -45,7 +45,7 @@ class Tin
                 if ($token->text === ':' && $tokens[$index - 1]->id === T_NAMED_PARAMETER) {
                     $token->id = T_NAMED_PARAMETER;
                 } elseif ($inAttribute && $token->text === ']' && ($tokens[$index + 1]->id === T_WHITESPACE || $tokens[$index + 1]->id === T_ATTRIBUTE)) {
-                    $token->id   = T_ATTRIBUTE_END;
+                    $token->id = T_ATTRIBUTE_END;
                     $inAttribute = false;
                 } elseif ($token->id === T_ATTRIBUTE) {
                     $inAttribute = true;
@@ -83,8 +83,8 @@ class Tin
             function (string $_, int|string $line) use ($transformer, $highlighted) {
                 $line = $transformer(...)->call(
                     $this,
-                    (int) $line,
-                    $highlighted[(int) $line],
+                    (int)$line,
+                    $highlighted[(int)$line],
                     count($highlighted),
                 );
 
@@ -94,13 +94,14 @@ class Tin
         );
     }
 
-    private function reindex(array $tokens, int $start, int $end): array
+    private function tokenize(string $code): array
     {
+        $tokens = Token::tokenize($code);
         $indexed = [];
-        $line    = 1;
+        $line = 1;
 
         foreach ($tokens as $token) {
-            $splits   = explode("\n", $token->text);
+            $splits = explode("\n", $token->text);
             $newLines = count($splits) - 1;
 
             foreach ($splits as $split) {
@@ -111,14 +112,10 @@ class Tin
                 }
 
                 $indexed[] = new Token($token->id, $split, $line);
-
-                if ($end !== -1 && count($indexed) === $end) {
-                    return $indexed;
-                }
             }
         }
 
-        return array_slice($tokens, $start, $end === -1 ? null : $end);
+        return $indexed;
     }
 
     /**
@@ -144,17 +141,17 @@ class Tin
             return T_NAMED_PARAMETER;
         }
 
-        $behind    = $this->lookBehind($tokens, $index - 1);
+        $behind = $this->lookBehind($tokens, $index - 1);
         $twoBehind = $this->lookBehind($tokens, $index - 2);
 
         return match ($behind->id) {
             T_NEW, T_USE, T_PRIVATE, T_PROTECTED, T_PUBLIC, T_NAMESPACE, T_CLASS, T_INTERFACE, T_TRAIT, T_EXTENDS, T_IMPLEMENTS, T_INSTEADOF, 58, 124, 63, 44 => T_CLASS_NAME,
-            T_FUNCTION        => $twoBehind->is([T_PRIVATE, T_PROTECTED, T_PUBLIC, T_STATIC]) ? T_METHOD_NAME : T_FUNCTION_DECL,
+            T_FUNCTION => $twoBehind->is([T_PRIVATE, T_PROTECTED, T_PUBLIC, T_STATIC]) ? T_METHOD_NAME : T_FUNCTION_DECL,
             T_OBJECT_OPERATOR => $ahead->text === '(' ? T_METHOD_NAME : T_VARIABLE,
-            T_DOUBLE_COLON    => $ahead->text === '(' || $ahead->id === T_INSTEADOF || $ahead->id === T_AS ? T_METHOD_NAME : T_CONST_NAME,
-            T_AS              => T_METHOD_NAME,
-            T_ATTRIBUTE       => T_ATTRIBUTE_CLASS,
-            default           => (function () use ($ahead, $twoBehind, $tokens, $index) {
+            T_DOUBLE_COLON => $ahead->text === '(' || $ahead->id === T_INSTEADOF || $ahead->id === T_AS ? T_METHOD_NAME : T_CONST_NAME,
+            T_AS => T_METHOD_NAME,
+            T_ATTRIBUTE => T_ATTRIBUTE_CLASS,
+            default => (function () use ($ahead, $twoBehind, $tokens, $index) {
                 if ($ahead->text === '(') {
                     return T_FUNCTION_NAME;
                 }
