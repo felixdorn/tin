@@ -88,13 +88,12 @@ class OneDark extends Theme
 ## Future
 
 * PHPDoc
-* Various outputs (cli / web)
 * grayscale theme
 
 ## Known Issues
 
-Named parameters are simply ignored by the built-in PHP parser which means that if you're named parameter is also a
-keyword such as for, default. The highlighter won't pick up on it and will highlight it as a keyword rather than a named
+Named parameters are simply ignored by the built-in PHP parser which means that if a named parameter is also a
+keyword such as `for`. The highlighter won't pick up on it and will highlight it as a keyword rather than a named
 parameter.
 
 There is no solution to that problem unless we implement our own parser (no) or the parser gets fixed,
