@@ -32,7 +32,7 @@ Yes, this comes from a terminal.
 use Felix\Tin\Themes\JetbrainsDark;
 use Felix\Tin\Tin;
 
-echo Tin::from(JetbrainsDark::class)->highlight("<?php\n\necho 'Hello world';\n");
+echo Tin::from(JetbrainsDark::class, $ansi = true)->highlight("<?php\n\necho 'Hello world';\n");
 ```
 
 ## Customizing the output
@@ -41,15 +41,12 @@ Apart from using a custom theme to change the colors, you have complete control 
 
 ```php
 $tin->process(
-    $code,
-    function (int $line, array $tokens, int $lineCount): ?string {
-        $lineNumber = sprintf(
-            "\e[38;2;%sm%s | \e[0m",
-            $this->theme->comment,
-            str_pad($line, strlen($lineCount),
-                ' ',
-                STR_PAD_LEFT
-            )
+   $code,
+   function (int $line, array $tokens, int $lineCount, \Felix\Tin\Themes\Theme $theme) {
+        $lineNumber = $theme->apply(
+            $theme->comment,
+            str_pad((string)$line, strlen((string)$lineCount), ' ', STR_PAD_LEFT) .
+            ' | '
         );
 
         return $lineNumber . implode('', $tokens) . PHP_EOL;
@@ -75,22 +72,28 @@ use Felix\Tin\Themes\Theme;
 
 class OneDark extends Theme
 {
-    public string $keyword        = '199;120;221';
-    public string $variable       = '224;107;116';
-    public string $comment        = '91;98;110';
-    public string $default        = '171;178;191';
-    public string $string         = '152;195;121';
-    public string $function       = '98;174;239';
-    public string $number         = '229;192;122';
-    public string $attribute      = '98;174;239';
-    public string $namedParameter = '98;174;239';
+    protected array $colors = [
+        'keyword'        => '199;120;221',
+        'variable'       => '224;107;116',
+        'comment'        => '91;98;110',
+        'string'         => '152;195;121',
+        'function'       => '98;174;239',
+        'number'         => '229;192;122',
+        'attribute'      => '98;174;239',
+        'namedParameter' => '98;174;239',
+        'default'        => '171;178;191',
+    ];
+
+    protected function color(string $name): string
+    {
+        return $this->colors[$name] ?? $this->colors['default'];
+    }
 }
 ```
 
 ## Future
 
 * PHPDoc
-* grayscale theme
 
 ## Known Issues
 
