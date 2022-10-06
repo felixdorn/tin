@@ -32,3 +32,11 @@ it('can process lines individually', function () {
 
     expect($hl)->toMatchSnapshot();
 });
+
+it('can disable ansi', function () {
+    $tin = Tin::from(OneDark::class, false);
+
+    $hl = $tin->highlight($this->sample);
+
+    expect($hl)->toMatchSnapshot();
+});

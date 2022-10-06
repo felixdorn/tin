@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Felix\Tin;
 
 use Felix\Tin\Themes\Theme;
@@ -11,23 +13,23 @@ class Tin
     }
 
     /** @param Theme|class-string<Theme> $theme */
-    public static function from(Theme|string $theme): self
+    public static function from(Theme|string $theme, bool $supportsAnsi = true): self
     {
-        return new self(is_string($theme) ? new $theme() : $theme);
+        if (is_string($theme)) {
+            return new self(new $theme($supportsAnsi));
+        }
+
+        return new self($theme->ansi($supportsAnsi));
     }
 
     public function highlight(string $code): string
     {
         return $this->process($code, function (int $line, array $tokens, int $lineCount) {
-            $lineNumber = sprintf(
-                "\e[38;2;%sm%s | \e[0m",
+            $lineNumber = $this->theme->apply(
                 $this->theme->comment,
-                str_pad(
-                    (string) $line,
-                    strlen((string) $lineCount),
-                    ' ',
-                    STR_PAD_LEFT
-                ));
+                str_pad((string) $line, strlen((string) $lineCount), ' ', STR_PAD_LEFT) .
+                ' | '
+            );
 
             return $lineNumber . implode('', $tokens) . PHP_EOL;
         });
@@ -75,7 +77,7 @@ class Tin
                 };
             }
 
-            $highlighted[$token->line][] = "\e[38;2;" . $color . 'm' . $token->text . "\e[0m";
+            $highlighted[$token->line][] = $this->theme->apply($color, $token->text);
         }
 
         return array_reduce(
