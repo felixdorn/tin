@@ -6,6 +6,7 @@ namespace Felix\Tin\Themes;
 
 class OneDark extends Theme
 {
+    /** @var array<string,string> */
     protected array $colors = [
         'keyword'        => '199;120;221',
         'variable'       => '224;107;116',

@@ -44,14 +44,14 @@ Apart from using a custom theme to change the colors, you have complete control 
 ```php
 $tin->process(
    $code,
-   function (int $line, array $tokens, int $lineCount, \Felix\Tin\Themes\Theme $theme) {
-        $lineNumber = $theme->apply(
-            $theme->comment,
-            str_pad((string)$line, strlen((string)$lineCount), ' ', STR_PAD_LEFT) .
+   function (\Felix\Tin\Line $line) {
+        $lineNumber = $line->theme->apply(
+            $line->theme->comment,
+            str_pad($line->number, strlen(($line->totalCount), ' ', STR_PAD_LEFT) .
             ' | '
         );
 
-        return $lineNumber . implode('', $tokens) . PHP_EOL;
+        return $lineNumber . $line->toString()  . PHP_EOL;
     }
 );
 ```
@@ -74,7 +74,8 @@ use Felix\Tin\Themes\Theme;
 
 class OneDark extends Theme
 {
-    protected array $colors = [
+        /** @var array<string,string>  */
+        protected array $colors = [
         'keyword'        => '199;120;221',
         'variable'       => '224;107;116',
         'comment'        => '91;98;110',

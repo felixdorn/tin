@@ -7,7 +7,7 @@ class Gardener implements Passionate
 
     public function workOn(Garden $garden, int|float $for = 7 /* in hours */)
     {
-        if ($duration == 0) {
+        if ($for == 0) {
             return 'Job done!';
         }
 
@@ -15,6 +15,6 @@ class Gardener implements Passionate
         $garden->fertilize();
         $garden->mow();
 
-        return $this->workOn(garden: $garden, for: $duration - 1);
+        return $this->workOn(garden: $garden, for: $for - 1);
     }
 }

@@ -6,8 +6,7 @@ namespace Felix\Tin;
 
 use Felix\Tin\Enums\TokenType;
 use Felix\Tin\Themes\Theme;
-use Generator;
-use SplStack;
+use SplQueue;
 
 class Tin
 {
@@ -27,53 +26,70 @@ class Tin
 
     public function highlight(string $code): string
     {
-        return $this->process($code, [$this, 'highlightLine']);
+        return $this->process($code, function (?Line $line): ?string {
+            if (!$line) {
+                return null;
+            }
+
+            $lineNumber = $line->theme->apply(
+                $line->theme->comment,
+                str_pad((string) $line->number, strlen((string) $line->totalCount), ' ', STR_PAD_LEFT) .
+                ' | '
+            );
+
+            return $lineNumber . $line->toString() . PHP_EOL;
+        });
     }
 
     public function process(string $code, callable $transformer): string
     {
         $tokens      = Tokenizer::tokenize($code);
-        $highlighted = iterator_to_array($this->groupTokensByLine($tokens));
-        $totalLines  = count($highlighted);
-
-        ob_start();
+        $highlighted = $this->groupTokensByLine($tokens);
+        $totalLines  = $highlighted->count();
+        $buffer      = '';
 
         foreach ($highlighted as $n => $lineTokens) {
-            $line = $transformer(new Line($n, $lineTokens, $totalLines, $this->theme));
+            $line = $transformer(new Line($n + 1, $lineTokens, $totalLines, $this->theme));
 
             if ($line) {
-                echo $line;
+                $buffer .= $line;
             }
         }
 
-        return ob_get_clean();
+        return $buffer;
     }
 
-    /** @param Generator<Token> $tokens */
-    private function groupTokensByLine(Generator $tokens): Generator
+    /**
+     * @param iterable<Token> $tokens
+     *
+     * @return SplQueue<SplQueue<Token>> $tokens
+     */
+    private function groupTokensByLine(iterable $tokens): SplQueue
     {
-        $line       = 1;
-        $lineTokens = new SplStack();
+        $line    = 0;
+        /** @var SplQueue<SplQueue<Token>> $grouped */
+        $grouped = new SplQueue();
 
         foreach ($tokens as $token) {
             $splits   = explode("\n", $token->text);
             $newLines = count($splits) - 1;
 
+            for ($i = $line; $i <= $line + $newLines; $i++) {
+                if (!isset($grouped[$i])) {
+                    /** @var SplQueue<Token> $queue */
+                    $queue = new SplQueue();
+                    $grouped->add($i, $queue);
+                }
+            }
+
             foreach ($splits as $split) {
                 if ($split === '' && $newLines > 0) {
-                    if (!$lineTokens->isEmpty()) {
-                        yield $line => $lineTokens;
-                        $lineTokens = new SplStack();
-                    }
-
                     $line++;
                     $newLines--;
-
-                    yield $line => new SplStack();
                     continue;
                 }
 
-                $lineTokens->push(new Token(
+                $grouped[$line]?->push(new Token(
                     TokenType::fromPhpId($token->id),
                     $token->id,
                     $split,
@@ -83,23 +99,6 @@ class Tin
             }
         }
 
-        if (!$lineTokens->isEmpty()) {
-            yield $line => $lineTokens;
-        }
-    }
-
-    public function highlightLine(?Line $line): ?string
-    {
-        if (!$line) {
-            return null;
-        }
-
-        $lineNumber = $line->theme->apply(
-            $line->theme->comment,
-            str_pad((string) $line->number, strlen((string) $line->lineCount), ' ', STR_PAD_LEFT) .
-            ' | '
-        );
-
-        return $lineNumber . $line->toString() . PHP_EOL;
+        return $grouped;
     }
 }

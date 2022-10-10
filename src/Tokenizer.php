@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Felix\Tin;
 
 use Generator;
@@ -17,10 +19,12 @@ class Tokenizer
         $this->code = rtrim(str_replace(["\r\n", "\r"], "\n", $code));
     }
 
-    /** @return Generator<Token> */
-    public static function tokenize(string $code)
+    /**
+     * @return Generator<Token>
+     */
+    public static function tokenize(string $code): Generator
     {
-        return (new static($code))->process();
+        return (new self($code))->process();
     }
 
     /** @return Generator<Token> */
@@ -192,12 +196,12 @@ class Tokenizer
      *
      * @param array<int, PhpToken> $tokens
      */
-    protected function look(int $hs, array $tokens, int $index): ?PhpToken
+    protected function look(int $hs, array $tokens, int $index): PhpToken
     {
-        $token = $tokens[$index] ?? null;
+        $token = $tokens[$index];
 
-        if ($token?->id === T_WHITESPACE) {
-            $token = $tokens[$index + $hs] ?? null;
+        if ($token->id === T_WHITESPACE) {
+            $token = $tokens[$index + $hs];
         }
 
         return $token;

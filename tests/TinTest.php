@@ -26,7 +26,7 @@ it('can skip lines when processing', function () {
 });
 
 it('can process lines individually', function () {
-    $hl = $this->tin->process("<?php\n1;\n2;\n3;", function (\Felix\Tin\Line $line) {
+    $hl = $this->tin->process("<?php\n1;\n2;\n3;", function (Felix\Tin\Line $line) {
         return $line->number % 2 === 0 ? $line->toString() : null;
     });
 

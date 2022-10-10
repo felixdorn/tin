@@ -1,19 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Felix\Tin;
 
 use Felix\Tin\Themes\Theme;
-use SplStack;
+use SplQueue;
 
 class Line
 {
     /**
-     * @param ?SplStack<Token> $tokens
+     * @param SplQueue<Token>|null $tokens
      */
     public function __construct(
         public readonly int $number,
-        public readonly ?SplStack $tokens,
-        public readonly int $lineCount,
+        public readonly ?SplQueue $tokens,
+        public readonly int $totalCount,
         public readonly Theme $theme,
     ) {
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Felix\Tin\Enums;
 
 enum TokenType: string
@@ -14,7 +16,7 @@ enum TokenType: string
     case NamedParameter = 'namedParameter';
     case Default        = 'default';
 
-    public static function fromPhpId($id): self
+    public static function fromPhpId(int $id): self
     {
         // A token with an id lower than 256 is equal to ord($token->text)
         // and will never be colorized as it will be something like: ;{}()[]

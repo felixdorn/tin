@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Felix\Tin;
 
 use Felix\Tin\Enums\TokenType;
@@ -16,9 +18,9 @@ class Token
     {
     }
 
-    public static function newUsing(int $id, PhpToken $token)
+    public static function newUsing(int $id, PhpToken $token): Token
     {
-        return new static(
+        return new self(
             TokenType::fromPhpId($id),
             $id,
             $token->text,

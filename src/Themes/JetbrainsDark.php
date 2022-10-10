@@ -6,6 +6,7 @@ namespace Felix\Tin\Themes;
 
 class JetbrainsDark extends Theme
 {
+    /** @var array<string,string> */
     public array $colors = [
         'keyword'        => '204;102;50',
         'variable'       => '152;118;170',
