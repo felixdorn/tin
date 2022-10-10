@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Felix\Tin\Themes;
 
+use Felix\Tin\Contracts\Theme;
 use Felix\Tin\Enums\TokenType;
 
 class OneDark extends Theme

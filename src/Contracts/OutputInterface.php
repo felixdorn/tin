@@ -3,7 +3,6 @@
 namespace Felix\Tin\Contracts;
 
 use Felix\Tin\Enums\TokenType;
-use Felix\Tin\Themes\Theme;
 
 interface OutputInterface
 {

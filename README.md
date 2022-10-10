@@ -45,10 +45,13 @@ Apart from using a custom theme to change the colors, you have complete control 
 $tin->process(
    $code,
    function (\Felix\Tin\Line $line) {
-        $lineNumber = $line->output->apply(
-            $line->output->comment,
-            str_pad($line->number, strlen(($line->totalCount), ' ', STR_PAD_LEFT) .
-            ' | '
+        $lineNumber = $line->output->transform(
+            \Felix\Tin\Enums\TokenType::Comment,
+            str_pad(
+                (string) $line->number,
+                strlen((string) $line->totalCount), ' ',
+                STR_PAD_LEFT
+            ) . ' | ',
         );
 
         return $lineNumber . $line->toString()  . PHP_EOL;
@@ -70,9 +73,10 @@ You need to extend `Felix\Tin\Themes\Theme` and set the colors to whatever you w
 The color are RGB values separated by a `;`.
 
 ```php
-use Felix\Tin\Themes\Theme;
+use Felix\Tin\Contracts\Theme;
+use Felix\Tin\Enums\TokenType;
 
-class OneDark extends Theme
+class OneDark implements Theme
 {
         /** @var array<string,string>  */
         protected array $colors = [
@@ -87,9 +91,9 @@ class OneDark extends Theme
         'default'        => '171;178;191',
     ];
 
-    protected function color(string $name): string
+    public function color(TokenType $type): string
     {
-        return $this->colors[$name] ?? $this->colors['default'];
+        return $this->colors[$type->value] ?? $this->colors['default'];
     }
 }
 ```

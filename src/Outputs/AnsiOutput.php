@@ -3,8 +3,8 @@
 namespace Felix\Tin\Outputs;
 
 use Felix\Tin\Contracts\OutputInterface;
+use Felix\Tin\Contracts\Theme;
 use Felix\Tin\Enums\TokenType;
-use Felix\Tin\Themes\Theme;
 
 class AnsiOutput implements OutputInterface
 {

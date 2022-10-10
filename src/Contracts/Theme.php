@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Felix\Tin\Themes;
+namespace Felix\Tin\Contracts;
 
 use Felix\Tin\Enums\TokenType;
 

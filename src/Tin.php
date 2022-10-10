@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Felix\Tin;
 
 use Felix\Tin\Contracts\OutputInterface;
+use Felix\Tin\Contracts\Theme;
 use Felix\Tin\Enums\TokenType;
 use Felix\Tin\Outputs\AnsiOutput;
-use Felix\Tin\Themes\Theme;
 use SplQueue;
 
 class Tin
