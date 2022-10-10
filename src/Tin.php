@@ -4,24 +4,36 @@ declare(strict_types=1);
 
 namespace Felix\Tin;
 
+use Felix\Tin\Contracts\OutputInterface;
 use Felix\Tin\Enums\TokenType;
+use Felix\Tin\Outputs\AnsiOutput;
 use Felix\Tin\Themes\Theme;
 use SplQueue;
 
 class Tin
 {
-    public function __construct(protected Theme $theme)
+    public function __construct(protected OutputInterface $output)
     {
     }
 
-    /** @param Theme|class-string<Theme> $theme */
-    public static function from(Theme|string $theme, bool $supportsAnsi = true): self
+    /**
+     * @param class-string<Theme|OutputInterface>|Theme|OutputInterface $theme
+     */
+    public static function from(string|Theme|OutputInterface $theme, bool $ansiEnabled = true): self
     {
-        if (is_string($theme)) {
-            return new self(new $theme($supportsAnsi));
+        if ($theme instanceof OutputInterface) {
+            return new self($theme);
         }
 
-        return new self($theme->ansi($supportsAnsi));
+        if (is_string($theme)) {
+            $theme = new $theme();
+        }
+
+        if ($theme instanceof OutputInterface) {
+            return new self($theme);
+        }
+
+        return new self(new AnsiOutput($theme, $ansiEnabled));
     }
 
     public function highlight(string $code): string
@@ -31,10 +43,13 @@ class Tin
                 return null;
             }
 
-            $lineNumber = $line->theme->apply(
-                $line->theme->comment,
-                str_pad((string) $line->number, strlen((string) $line->totalCount), ' ', STR_PAD_LEFT) .
-                ' | '
+            $lineNumber = $line->output->transform(
+                TokenType::Comment,
+                str_pad(
+                    (string) $line->number,
+                    strlen((string) $line->totalCount), ' ',
+                    STR_PAD_LEFT
+                ) . ' | ',
             );
 
             return $lineNumber . $line->toString() . PHP_EOL;
@@ -43,15 +58,14 @@ class Tin
 
     public function process(string $code, callable $transformer): string
     {
-        $tokens      = Tokenizer::tokenize($code);
-        $highlighted = $this->groupTokensByLine($tokens);
-        $totalLines  = $highlighted->count();
-        $buffer      = '';
+        $tokens = $this->groupTokensByLine(
+            Tokenizer::tokenize($code)
+        );
+        $totalLines = $tokens->count();
+        $buffer     = '';
 
-        foreach ($highlighted as $n => $lineTokens) {
-            $line = $transformer(new Line($n + 1, $lineTokens, $totalLines, $this->theme));
-
-            if ($line) {
+        foreach ($tokens as $n => $lineTokens) {
+            if ($line = $transformer(new Line($n + 1, $lineTokens, $totalLines, $this->output))) {
                 $buffer .= $line;
             }
         }
@@ -66,7 +80,7 @@ class Tin
      */
     private function groupTokensByLine(iterable $tokens): SplQueue
     {
-        $line    = 0;
+        $line = 0;
         /** @var SplQueue<SplQueue<Token>> $grouped */
         $grouped = new SplQueue();
 

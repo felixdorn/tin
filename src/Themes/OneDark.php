@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Felix\Tin\Themes;
 
+use Felix\Tin\Enums\TokenType;
+
 class OneDark extends Theme
 {
     /** @var array<string,string> */
@@ -19,8 +21,8 @@ class OneDark extends Theme
         'default'        => '171;178;191',
     ];
 
-    protected function color(string $name): string
+    public function color(TokenType $type): string
     {
-        return $this->colors[$name] ?? $this->colors['default'];
+        return $this->colors[$type->value] ?? $this->colors['default'];
     }
 }

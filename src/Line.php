@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Felix\Tin;
 
-use Felix\Tin\Themes\Theme;
+use Felix\Tin\Contracts\OutputInterface;
 use SplQueue;
 
 class Line
@@ -16,7 +16,7 @@ class Line
         public readonly int $number,
         public readonly ?SplQueue $tokens,
         public readonly int $totalCount,
-        public readonly Theme $theme,
+        public readonly OutputInterface $output,
     ) {
     }
 
@@ -31,7 +31,7 @@ class Line
         while (!$this->tokens->isEmpty()) {
             /** @var Token $token */
             $token  = $this->tokens->pop();
-            $buffer = $this->theme->apply($token->type->value, $token->text) . $buffer;
+            $buffer = $this->output->transform($token->type, $token->text) . $buffer;
         }
 
         // Make sure this method is idempotent.

@@ -45,8 +45,8 @@ Apart from using a custom theme to change the colors, you have complete control 
 $tin->process(
    $code,
    function (\Felix\Tin\Line $line) {
-        $lineNumber = $line->theme->apply(
-            $line->theme->comment,
+        $lineNumber = $line->output->apply(
+            $line->output->comment,
             str_pad($line->number, strlen(($line->totalCount), ' ', STR_PAD_LEFT) .
             ' | '
         );
