@@ -38,18 +38,13 @@ abstract class Theme
         return $this;
     }
 
-    public function sprintf(string $color, string $text, bool|float|int|string|null ...$args): string
-    {
-        return $this->apply($color, sprintf($text, ...$args));
-    }
-
-    public function apply(string $color, string $text): string
+    public function apply(string $type, string $text): string
     {
         if (!$this->ansiEnabled) {
             return $text;
         }
 
-        return "\033[38;2;{$this->color($color)}m$text\033[0m";
+        return "\e[38;2;{$this->color($type)}m$text\e[0m";
     }
 
     /**

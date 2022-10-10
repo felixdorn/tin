@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 if (!defined('T_CLASS_NAME')) {
     define('T_CLASS_NAME', 10_000 + 1);
@@ -38,4 +38,8 @@ if (!defined('T_ATTRIBUTE_END')) {
 
 if (!defined('T_NAMED_PARAMETER')) {
     define('T_NAMED_PARAMETER', 10_000 + 512);
+}
+
+if (!defined('T_ENUM_NAME')) {
+    define('T_ENUM_NAME', 10_000 + 1024);
 }

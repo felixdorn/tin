@@ -90,7 +90,7 @@
  90 |     $a = static function () {
  91 |     };
  92 | 
- 93 |     #[LanguageLevelTypeAware(['a' => 4], 1)]#[A]
+ 93 |     #[LanguageLevelTypeAware(['a' => 4], 1)] #[A]
  94 |     #[B]
  95 |     function a(A $a)
  96 |     {
@@ -103,4 +103,22 @@
 103 |     }
 104 | 
 105 |     foo(bar: 'aa')[A::class];
-106 | }
+106 | 
+107 |     abstract class D
+108 |     {
+109 |         abstract public function a();
+110 |     }
+111 | 
+112 |     final class X
+113 |     {
+114 |         public function __construct(
+115 |             public readonly int $a
+116 |         ) {
+117 |         }
+118 |     }
+119 | 
+120 |     enum S: string {
+121 |         case A = 'a';
+122 |         case B = 'b';
+123 |     }
+124 | }

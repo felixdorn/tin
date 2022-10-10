@@ -90,7 +90,7 @@ namespace {
     $a = static function () {
     };
 
-    #[LanguageLevelTypeAware(['a' => 4], 1)]#[A]
+    #[LanguageLevelTypeAware(['a' => 4], 1)] #[A]
     #[B]
     function a(A $a)
     {
@@ -103,4 +103,22 @@ namespace {
     }
 
     foo(bar: 'aa')[A::class];
+
+    abstract class D
+    {
+        abstract public function a();
+    }
+
+    final class X
+    {
+        public function __construct(
+            public readonly int $a
+        ) {
+        }
+    }
+
+    enum S: string {
+        case A = 'a';
+        case B = 'b';
+    }
 }
