@@ -1,7 +1,10 @@
 <?php
 
+use Felix\Tin\Line;
+use Felix\Tin\Outputs\TestOutput;
 use Felix\Tin\Themes\OneDark;
 use Felix\Tin\Tin;
+use Felix\Tin\Token;
 use PHPUnit\Framework\TestCase;
 
 use function Spatie\Snapshots\assertMatchesTextSnapshot;
@@ -39,4 +42,18 @@ it('can disable ansi', function () {
     $hl = $tin->highlight($this->sample);
 
     expect($hl)->toMatchSnapshot();
+});
+
+test('line rendering is idempotent', function () {
+    $queue = new SplQueue();
+    // todo: this is unreadable
+    $queue->push(Token::fromPhpToken(T_OPEN_TAG, new PhpToken(T_OPEN_TAG, '<?php')));
+    $queue->push(Token::fromPhpToken(T_LNUMBER, new PhpToken(T_LNUMBER, '1')));
+    $queue->push(Token::fromPhpToken(ord(';'), new PhpToken(ord(';'), ';')));
+
+    $line = new Line(1, $queue, 1, new TestOutput());
+
+    $a = $line->toString();
+    $b = $line->toString();
+    expect($b)->toBe($a);
 });
