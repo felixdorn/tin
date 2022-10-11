@@ -64,7 +64,7 @@ class Tin
     /**
      * Converts a piece of code to lines made of tokens and passes each line to a transformer.
      *
-     * @param callable(?Line): ?string $transformer
+     * @param callable(Line): ?string $transformer
      */
     public function process(string $code, callable $transformer): string
     {
