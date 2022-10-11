@@ -12,19 +12,15 @@ const BEHIND = -1;
 
 class Tokenizer
 {
-    protected string $code;
-
-    protected function __construct(string $code)
+    protected function __construct(protected string $code)
     {
-        $this->code = rtrim(str_replace(["\r\n", "\r"], "\n", $code));
     }
 
-    /**
-     * @return Generator<Token>
-     */
     public static function tokenize(string $code): Generator
     {
-        return (new self($code))->process();
+        return (new self(
+            rtrim(str_replace(["\r\n", "\r"], "\n", $code))
+        ))->process();
     }
 
     /** @return Generator<Token> */

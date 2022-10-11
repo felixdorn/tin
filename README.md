@@ -46,7 +46,7 @@ $tin->process(
    $code,
    function (\Felix\Tin\Line $line) {
         $lineNumber = $line->output->transform(
-            \Felix\Tin\Enums\TokenType::Comment,
+            \Felix\Tin\Enums\TokenType::LineNumber,
             str_pad(
                 (string) $line->number,
                 strlen((string) $line->totalCount), ' ',
@@ -54,7 +54,7 @@ $tin->process(
             ) . ' | ',
         );
 
-        return $lineNumber . $line->toString()  . PHP_EOL;
+        return $lineNumber . $line->toString()  . $line->output->newLine();
     }
 );
 ```
@@ -78,6 +78,7 @@ use Felix\Tin\Enums\TokenType;
 
 class OneDark extends Theme
 {
+    /** {@inheritDoc} */
     public function color(TokenType $type): string
     {
         return match ($type) {

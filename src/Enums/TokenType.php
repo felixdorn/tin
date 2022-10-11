@@ -6,18 +6,20 @@ namespace Felix\Tin\Enums;
 
 enum TokenType: string
 {
-    case Keyword          = 'keyword';
-    case Variable         = 'variable';
-    case Comment          = 'comment';
-    case String           = 'string';
-    case Function         = 'function';
-    case Number           = 'number';
-    case Attribute        = 'attribute';
-    case NamedParameter   = 'namedParameter';
-    case Default          = 'default';
-    case Html             = 'html';
+    case Keyword        = 'keyword';
+    case Variable       = 'variable';
+    case Comment        = 'comment';
+    case String         = 'string';
+    case Function       = 'function';
+    case Number         = 'number';
+    case Attribute      = 'attribute';
+    case NamedParameter = 'namedParameter';
+    case Default        = 'default';
+    case Html           = 'html';
+    case LineNumber     = 'lineNumber';
 
-    public static function fromPhpId(int $id): self
+    /** Converts a T_* constant to a TokenType, constants defined in src/constants.php are also supported */
+    public static function fromId(int $id): self
     {
         // A token with an id lower than 256 is equal to ord($token->text)
         // and will never be colorized as it will be something like: ;{}()[]

@@ -9,7 +9,7 @@ use PhpToken;
 
 class Token
 {
-    public function __construct(
+    protected function __construct(
         public readonly TokenType $type,
         public readonly int $id,
         public readonly string $text,
@@ -18,14 +18,11 @@ class Token
 
     public static function fromPhpToken(int $id, PhpToken $token): Token
     {
-        return new self(
-            TokenType::fromPhpId($id),
-            $id,
-            $token->text,
-        );
+        return new self(TokenType::fromId($id), $id, $token->text);
     }
 
-    public function withText(string $text): self
+    /** @return self A clone of the token with the updated text */
+    public function withText(string $text): Token
     {
         return new self($this->type, $this->id, $text);
     }

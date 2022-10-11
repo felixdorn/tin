@@ -17,10 +17,14 @@ class Tin
     }
 
     /**
-     * @param class-string<Theme|OutputInterface>|Theme|OutputInterface $theme
+     * @param class-string<Theme|OutputInterface>|Theme|OutputInterface $theme       You may pass a theme/output class name
+     *                                                                               or an instance of either, by default the AnsiOutput is used
+     * @param bool                                                      $ansiEnabled Whether to enable ANSI output, by default it is enabled,
+     *                                                                               this setting is ignored if you do not pass a theme class or instance
      */
     public static function from(string|Theme|OutputInterface $theme, bool $ansiEnabled = true): self
     {
+        //  The logic here is somewhat convoluted to avoid breaking changes, keep it this way for now
         if ($theme instanceof OutputInterface) {
             return new self($theme);
         }
@@ -36,6 +40,7 @@ class Tin
         return new self(new AnsiOutput($theme, $ansiEnabled));
     }
 
+    /** Highlights a piece of code with line numbers */
     public function highlight(string $code): string
     {
         return $this->process($code, function (?Line $line): ?string {
@@ -44,7 +49,7 @@ class Tin
             }
 
             $lineNumber = $line->output->transform(
-                TokenType::Comment,
+                TokenType::LineNumber,
                 str_pad(
                     (string) $line->number,
                     strlen((string) $line->totalCount), ' ',
@@ -52,10 +57,15 @@ class Tin
                 ) . ' | ',
             );
 
-            return $lineNumber . $line->toString() . PHP_EOL;
+            return $lineNumber . $line->toString() . $line->output->newLine();
         });
     }
 
+    /**
+     * Converts a piece of code to lines made of tokens and passes each line to a transformer.
+     *
+     * @param callable(?Line): ?string $transformer
+     */
     public function process(string $code, callable $transformer): string
     {
         $tokens = $this->groupTokensByLine(
@@ -80,36 +90,39 @@ class Tin
      */
     private function groupTokensByLine(iterable $tokens): SplQueue
     {
-        $line = 0;
+        $lineIndex = 0;
         /** @var SplQueue<SplQueue<Token>> $grouped */
         $grouped = new SplQueue();
 
         foreach ($tokens as $token) {
-            $splits   = explode("\n", $token->text);
-            $newLines = count($splits) - 1;
+            $lines        = explode("\n", $token->text);
+            $newLineCount = count($lines) - 1;
 
-            for ($i = $line; $i <= $line + $newLines; $i++) {
-                if (!isset($grouped[$i])) {
-                    /** @var SplQueue<Token> $queue */
-                    $queue = new SplQueue();
-                    $grouped->add($i, $queue);
+            // add empty queues for new lines
+            for ($i = $lineIndex; $i <= $lineIndex + $newLineCount; $i++) {
+                if (isset($grouped[$i])) {
+                    continue;
                 }
+
+                /** @var SplQueue<Token> $queue */
+                $queue = new SplQueue();
+                $grouped->add($i, $queue);
             }
 
-            foreach ($splits as $split) {
+            foreach ($lines as $line) {
                 if ($token->id === T_INLINE_HTML) {
-                    $grouped[$line]?->push($token->withText($split));
-                    $line++;
+                    $grouped[$lineIndex]?->push($token->withText($line));
+                    $lineIndex++;
                     continue;
                 }
 
-                if ($split === '' && $newLines > 0) {
-                    $line++;
-                    $newLines--;
+                if ($line === '' && $newLineCount > 0) {
+                    $lineIndex++;
+                    $newLineCount--;
                     continue;
                 }
 
-                $grouped[$line]?->push($token->withText($split));
+                $grouped[$lineIndex]?->push($token->withText($line));
             }
         }
 
