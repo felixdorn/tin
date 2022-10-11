@@ -122,3 +122,15 @@
 122 |         case B = 'b';
 123 |     }
 124 | }
+125 | ?>
+126 | <html>
+127 |     <head>
+128 |         <meta charset="UTF-8">
+129 |         <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+130 |         <meta http-equiv="X-UA-Compatible" content="ie=edge">
+131 |         <title>Document</title>
+132 |     </head>
+133 |     <body>
+134 | 
+135 |     </body>
+136 | </html>

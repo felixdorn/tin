@@ -35,23 +35,23 @@ class Tokenizer
 
         foreach ($raw as $index => $token) {
             if ($token->is(['true', 'false', 'null', 'string', 'int', 'float', 'object', 'callable', 'array', 'iterable', 'bool', 'self'])) {
-                yield Token::newUsing(T_BUILTIN_TYPE, $token);
+                yield Token::fromPhpToken(T_BUILTIN_TYPE, $token);
                 continue;
             }
 
             if ($token->text === ':' && $index - 1 >= 0 && $this->idFromContext($raw, $index - 1) === T_NAMED_PARAMETER) {
-                yield Token::newUsing(T_NAMED_PARAMETER, $token);
+                yield Token::fromPhpToken(T_NAMED_PARAMETER, $token);
                 continue;
             }
 
             if ($token->id === T_STRING) {
-                yield Token::newUsing($this->idFromContext($raw, $index), $token);
+                yield Token::fromPhpToken($this->idFromContext($raw, $index), $token);
                 continue;
             }
 
             if ($token->id === T_ATTRIBUTE) {
                 $inAttribute = true;
-                yield Token::newUsing(T_ATTRIBUTE, $token);
+                yield Token::fromPhpToken(T_ATTRIBUTE, $token);
                 continue;
             }
 
@@ -61,12 +61,12 @@ class Tokenizer
             // (1) Current token is ']'
             // (2) Next token is whitespace or another attribute
             if ($inAttribute && $token->text === ']' && $next && $next->is([T_WHITESPACE, T_ATTRIBUTE])) {
-                yield Token::newUsing(T_ATTRIBUTE_END, $token);
+                yield Token::fromPhpToken(T_ATTRIBUTE_END, $token);
                 $inAttribute = false;
                 continue;
             }
 
-            yield Token::newUsing($token->id, $token);
+            yield Token::fromPhpToken($token->id, $token);
         }
     }
 

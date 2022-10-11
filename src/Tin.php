@@ -97,19 +97,19 @@ class Tin
             }
 
             foreach ($splits as $split) {
+                if ($token->id === T_INLINE_HTML) {
+                    $grouped[$line]?->push($token->withText($split));
+                    $line++;
+                    continue;
+                }
+
                 if ($split === '' && $newLines > 0) {
                     $line++;
                     $newLines--;
                     continue;
                 }
 
-                $grouped[$line]?->push(new Token(
-                    TokenType::fromPhpId($token->id),
-                    $token->id,
-                    $split,
-                    $line,
-                    $token->position
-                ));
+                $grouped[$line]?->push($token->withText($split));
             }
         }
 

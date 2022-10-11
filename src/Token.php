@@ -13,19 +13,20 @@ class Token
         public readonly TokenType $type,
         public readonly int $id,
         public readonly string $text,
-        public readonly int $line = -1,
-        public readonly int $position = -1)
-    {
+    ) {
     }
 
-    public static function newUsing(int $id, PhpToken $token): Token
+    public static function fromPhpToken(int $id, PhpToken $token): Token
     {
         return new self(
             TokenType::fromPhpId($id),
             $id,
             $token->text,
-            $token->line,
-            $token->pos
         );
+    }
+
+    public function withText(string $text): self
+    {
+        return new self($this->type, $this->id, $text);
     }
 }

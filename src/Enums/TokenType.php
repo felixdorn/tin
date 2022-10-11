@@ -6,15 +6,16 @@ namespace Felix\Tin\Enums;
 
 enum TokenType: string
 {
-    case Keyword        = 'keyword';
-    case Variable       = 'variable';
-    case Comment        = 'comment';
-    case String         = 'string';
-    case Function       = 'function';
-    case Number         = 'number';
-    case Attribute      = 'attribute';
-    case NamedParameter = 'namedParameter';
-    case Default        = 'default';
+    case Keyword          = 'keyword';
+    case Variable         = 'variable';
+    case Comment          = 'comment';
+    case String           = 'string';
+    case Function         = 'function';
+    case Number           = 'number';
+    case Attribute        = 'attribute';
+    case NamedParameter   = 'namedParameter';
+    case Default          = 'default';
+    case Html             = 'html';
 
     public static function fromPhpId(int $id): self
     {
@@ -29,6 +30,7 @@ enum TokenType: string
             T_METHOD_NAME, T_FUNCTION_DECL => TokenType::Function,
             T_COMMENT, T_DOC_COMMENT => TokenType::Comment,
             T_CONSTANT_ENCAPSED_STRING, T_ENCAPSED_AND_WHITESPACE => TokenType::String,
+            T_INLINE_HTML => TokenType::Html,
             T_LNUMBER, T_DNUMBER => TokenType::Number,
             T_VARIABLE, T_CONST_NAME, T_NUM_STRING, T_CLASS_C, T_METHOD_C, T_NS_C, T_FUNC_C, T_TRAIT_C, T_DIR, T_FILE, T_LINE => TokenType::Variable,
             T_ATTRIBUTE, T_ATTRIBUTE_CLASS, T_ATTRIBUTE_END => TokenType::Attribute,
