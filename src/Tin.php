@@ -68,11 +68,11 @@ class Tin
      */
     public function process(string $code, callable $transformer): string
     {
-        $tokens = $this->groupTokensByLine(
+        $buffer     = '';
+        $tokens     = $this->groupTokensByLine(
             Tokenizer::tokenize($code)
         );
         $totalLines = $tokens->count();
-        $buffer     = '';
 
         foreach ($tokens as $n => $lineTokens) {
             if ($line = $transformer(new Line($n + 1, $lineTokens, $totalLines, $this->output))) {
@@ -95,22 +95,22 @@ class Tin
         $grouped = new SplQueue();
 
         foreach ($tokens as $token) {
-            $lines        = explode("\n", $token->text);
+            $lines        = explode(PHP_EOL, $token->text);
             $newLineCount = count($lines) - 1;
 
             // add empty queues for new lines
-            for ($i = $lineIndex; $i <= $lineIndex + $newLineCount; $i++) {
-                if (isset($grouped[$i])) {
+            for ($i = 0; $i <= $newLineCount; $i++) {
+                if (isset($grouped[$lineIndex + $i])) {
                     continue;
                 }
 
                 /** @var SplQueue<Token> $queue */
                 $queue = new SplQueue();
-                $grouped->add($i, $queue);
+                $grouped->add($lineIndex + $i, $queue);
             }
 
             foreach ($lines as $line) {
-                if ($token->id === T_INLINE_HTML) {
+                if ($token->id === T_INLINE_HTML || $token->id === T_DOC_COMMENT) {
                     $grouped[$lineIndex]?->push($token->withText($line));
                     $lineIndex++;
                     continue;

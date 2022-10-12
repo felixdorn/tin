@@ -15,7 +15,7 @@ class OneDark extends Theme
         return match ($type) {
             TokenType::Keyword  => '199;120;221',
             TokenType::Variable => '224;107;116',
-            TokenType::LineNumber, TokenType::Comment => '91;98;110',
+            TokenType::DocComment, TokenType::LineNumber, TokenType::Comment => '91;98;110',
             TokenType::String => '152;195;121',
             TokenType::Function, TokenType::NamedParameter, TokenType::Attribute => '98;174;239',
             TokenType::Number, TokenType::Html => '229;192;122',

@@ -30,6 +30,16 @@ class Tokenizer
         $inAttribute = false;
 
         foreach ($raw as $index => $token) {
+            // Remove a trailing new line if the T_WHITESPACE succeeds to a T_DOC_COMMENT
+            if ($token->is(T_WHITESPACE) && $index - 1 >= 0 && $raw[$index - 1]->is(T_DOC_COMMENT)) {
+                if (str_ends_with($token->text, PHP_EOL)) {
+                    $token->text = substr($token->text, 0, -1);
+                }
+
+                yield Token::fromPhpToken(T_WHITESPACE, $token);
+                continue;
+            }
+
             if ($token->is(['true', 'false', 'null', 'string', 'int', 'float', 'object', 'callable', 'array', 'iterable', 'bool', 'self'])) {
                 yield Token::fromPhpToken(T_BUILTIN_TYPE, $token);
                 continue;

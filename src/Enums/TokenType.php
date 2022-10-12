@@ -9,6 +9,7 @@ enum TokenType: string
     case Keyword        = 'keyword';
     case Variable       = 'variable';
     case Comment        = 'comment';
+    case DocComment     = 'docComment';
     case String         = 'string';
     case Function       = 'function';
     case Number         = 'number';
@@ -30,7 +31,8 @@ enum TokenType: string
 
         return match ($id) {
             T_METHOD_NAME, T_FUNCTION_DECL => TokenType::Function,
-            T_COMMENT, T_DOC_COMMENT => TokenType::Comment,
+            T_COMMENT     => TokenType::Comment,
+            T_DOC_COMMENT => TokenType::DocComment,
             T_CONSTANT_ENCAPSED_STRING, T_ENCAPSED_AND_WHITESPACE => TokenType::String,
             T_INLINE_HTML => TokenType::Html,
             T_LNUMBER, T_DNUMBER => TokenType::Number,
