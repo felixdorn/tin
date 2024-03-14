@@ -8,7 +8,6 @@ use Felix\Tin\Contracts\OutputInterface;
 use Felix\Tin\Contracts\Theme;
 use Felix\Tin\Enums\TokenType;
 use Felix\Tin\Outputs\AnsiOutput;
-use SplQueue;
 
 class Tin
 {
@@ -86,13 +85,13 @@ class Tin
     /**
      * @param iterable<Token> $tokens
      *
-     * @return SplQueue<SplQueue<Token>> $tokens
+     * @return \SplQueue<\SplQueue<Token>> $tokens
      */
-    private function groupTokensByLine(iterable $tokens): SplQueue
+    private function groupTokensByLine(iterable $tokens): \SplQueue
     {
         $lineIndex = 0;
-        /** @var SplQueue<SplQueue<Token>> $grouped */
-        $grouped = new SplQueue();
+        /** @var \SplQueue<\SplQueue<Token>> $grouped */
+        $grouped = new \SplQueue();
 
         foreach ($tokens as $token) {
             $lines        = explode(PHP_EOL, $token->text);
@@ -104,8 +103,8 @@ class Tin
                     continue;
                 }
 
-                /** @var SplQueue<Token> $queue */
-                $queue = new SplQueue();
+                /** @var \SplQueue<Token> $queue */
+                $queue = new \SplQueue();
                 $grouped->add($lineIndex + $i, $queue);
             }
 

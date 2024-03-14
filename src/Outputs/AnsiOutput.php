@@ -14,7 +14,6 @@ class AnsiOutput implements OutputInterface
     {
     }
 
-    /** {@inheritDoc} */
     public function transform(TokenType $type, string $value): string
     {
         if (!$this->ansiEnabled) {
@@ -24,13 +23,11 @@ class AnsiOutput implements OutputInterface
         return "\e[38;2;{$this->theme->color($type)}m{$value}\e[0m";
     }
 
-    /** {@inheritDoc} */
     public function theme(): Theme
     {
         return $this->theme;
     }
 
-    /** {@inheritDoc} */
     public function newLine(): string
     {
         return PHP_EOL;

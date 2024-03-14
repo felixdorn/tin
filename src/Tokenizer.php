@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Felix\Tin;
 
-use Generator;
-use PhpToken;
-
 const AHEAD  = 1;
 const BEHIND = -1;
 
@@ -16,17 +13,17 @@ class Tokenizer
     {
     }
 
-    public static function tokenize(string $code): Generator
+    public static function tokenize(string $code): \Generator
     {
         return (new self(
             rtrim(str_replace(["\r\n", "\r"], "\n", $code))
         ))->process();
     }
 
-    /** @return Generator<Token> */
-    protected function process(): Generator
+    /** @return \Generator<Token> */
+    protected function process(): \Generator
     {
-        $raw         = PhpToken::tokenize($this->code, TOKEN_PARSE);
+        $raw         = \PhpToken::tokenize($this->code, TOKEN_PARSE);
         $inAttribute = false;
 
         foreach ($raw as $index => $token) {
@@ -89,7 +86,7 @@ class Tokenizer
      *  - T_NAMED_PARAMETER
      *  - T_ATTRIBUTE_CLASS
      *
-     * @param array<int, PhpToken> $tokens
+     * @param array<int, \PhpToken> $tokens
      */
     protected function idFromContext(array $tokens, int $index): int
     {
@@ -200,9 +197,9 @@ class Tokenizer
     /**
      * Finds the nearest non-whitespace token at a given index in a given direction.
      *
-     * @param array<int, PhpToken> $tokens
+     * @param array<int, \PhpToken> $tokens
      */
-    protected function look(int $hs, array $tokens, int $index): PhpToken
+    protected function look(int $hs, array $tokens, int $index): \PhpToken
     {
         $token = $tokens[$index];
 

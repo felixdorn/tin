@@ -9,7 +9,6 @@ use Felix\Tin\Enums\TokenType;
 
 class JetbrainsDark extends Theme
 {
-    /** {@inheritDoc} */
     public function color(TokenType $type): string
     {
         return match ($type) {

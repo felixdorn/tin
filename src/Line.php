@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Felix\Tin;
 
 use Felix\Tin\Contracts\OutputInterface;
-use SplQueue;
 
 class Line
 {
-    /** @param SplQueue<Token> $tokens */
+    /** @param \SplQueue<Token> $tokens */
     public function __construct(
         public readonly int $number,
-        public readonly SplQueue $tokens,
+        public readonly \SplQueue $tokens,
         public readonly int $totalCount,
         public readonly OutputInterface $output,
     ) {
