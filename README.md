@@ -45,13 +45,39 @@ you are just looking to change the colors.
 
 ## Outputs
 
-* [`Felix\Tin\Themes\AnsiOutput`](src/Outputs/AnsiOutput.php)
+* **ANSI** [`Felix\Tin\Themes\AnsiOutput`](src/Outputs/AnsiOutput.php)
+
+```php
+$tin = new \Felix\Tin\Tin(
+    new \Felix\Tin\Outputs\AnsiOutput()
+)
+```
+
+* **HTML** [`Felix\Tin\Themes\HtmlOutput`](src/Outputs/HtmlOutput.php)
+
+```php
+$tin = new \Felix\Tin\Tin(
+    new \Felix\Tin\Outputs\HtmlOutput()
+)
+```
+
 * [`Felix\Tin\Themes\CallableOutput`](src/Outputs/CallableOutput.php)
-* [`Felix\Tin\Themes\HtmlOutput`](src/Outputs/HtmlOutput.php)
+
+Callable output is best used in combination with the ANSI or HTML output, you can think of it as a sort of decorator
+when you need change a small thing without creating a class.
+
+```php
+$tin = new \Felix\Tin\Tin(
+    new \Felix\Tin\Outputs\CallableOutput(
+        new \Felix\Tin\Themes\OneDark(),
+        fn (\Felix\Tin\Line $line) => $line->number % 2 ? (new \Felix\Tin\Outputs\AnsiOutput())->transformLine($line) : null
+    )
+)
+```
 
 ## Themes
 
-Themes define the colors used by outputs. The format is `r;g;b`, to match ANSI default format.
+Themes define the colors used by outputs. The format is `r;g;b`, to match the default ANSI format.
 
 * [`Felix\Tin\Themes\JetbrainsDark`](src/Themes/JetbrainsDark.php)
 * [`Felix\Tin\Themes\OneDark`](src/Themes/OneDark.php)
