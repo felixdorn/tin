@@ -110,7 +110,7 @@ class Tin
 
             foreach ($lines as $line) {
                 if ($token->id === T_INLINE_HTML || $token->id === T_DOC_COMMENT) {
-                    $grouped[$lineIndex]?->push($token->withText($line));
+                    $grouped[$lineIndex]->push($token->withText($line));
                     $lineIndex++;
                     continue;
                 }
@@ -121,7 +121,7 @@ class Tin
                     continue;
                 }
 
-                $grouped[$lineIndex]?->push($token->withText($line));
+                $grouped[$lineIndex]->push($token->withText($line));
             }
         }
 
