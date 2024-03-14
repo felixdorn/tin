@@ -18,7 +18,7 @@ You can install the package via composer:
 composer require felixdorn/tin
 ```
 
-## 🔞 Screenshots
+## Screenshots
 
 ![A piece of code highlighted using tin ](art/screenshot.png)
 
