@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Felix\Tin;
 
 use Felix\Tin\Contracts\OutputInterface;
-use Felix\Tin\Contracts\Theme;
-use Felix\Tin\Enums\TokenType;
+use Felix\Tin\Contracts\ThemeInterface;
 use Felix\Tin\Outputs\AnsiOutput;
 
 class Tin
@@ -16,12 +15,12 @@ class Tin
     }
 
     /**
-     * @param class-string<Theme|OutputInterface>|Theme|OutputInterface $theme       You may pass a theme/output class name
-     *                                                                               or an instance of either, by default the AnsiOutput is used
-     * @param bool                                                      $ansiEnabled Whether to enable ANSI output, by default it is enabled,
-     *                                                                               this setting is ignored if you do not pass a theme class or instance
+     * @param class-string<ThemeInterface|OutputInterface>|ThemeInterface|OutputInterface $theme       You may pass a theme/output class name
+     *                                                                                                 or an instance of either, by default the AnsiOutput is used
+     * @param bool                                                                        $ansiEnabled Whether to enable ANSI output, by default it is enabled,
+     *                                                                                                 this setting is ignored if you do not pass a theme class or instance
      */
-    public static function from(string|Theme|OutputInterface $theme, bool $ansiEnabled = true): self
+    public static function from(string|ThemeInterface|OutputInterface $theme, bool $ansiEnabled = true): self
     {
         //  The logic here is somewhat convoluted to avoid breaking changes, keep it this way for now
         if ($theme instanceof OutputInterface) {
@@ -42,39 +41,17 @@ class Tin
     /** Highlights a piece of code with line numbers */
     public function highlight(string $code): string
     {
-        return $this->process($code, function (?Line $line): ?string {
-            if (!$line) {
-                return null;
-            }
-
-            $lineNumber = $line->output->transform(
-                TokenType::LineNumber,
-                str_pad(
-                    (string) $line->number,
-                    strlen((string) $line->totalCount), ' ',
-                    STR_PAD_LEFT
-                ) . ' | ',
-            );
-
-            return $lineNumber . $line->toString() . $line->output->newLine();
-        });
-    }
-
-    /**
-     * Converts a piece of code to lines made of tokens and passes each line to a transformer.
-     *
-     * @param callable(Line): ?string $transformer
-     */
-    public function process(string $code, callable $transformer): string
-    {
-        $buffer     = '';
-        $tokens     = $this->groupTokensByLine(
+        $buffer = '';
+        $tokens = $this->groupTokensByLine(
             Tokenizer::tokenize($code)
         );
         $totalLines = $tokens->count();
 
         foreach ($tokens as $n => $lineTokens) {
-            if ($line = $transformer(new Line($n + 1, $lineTokens, $totalLines, $this->output))) {
+            $line = new Line($n + 1, $lineTokens, $totalLines, $this->output);
+            $line = $this->output->transformLine($line);
+
+            if ($line) {
                 $buffer .= $line;
             }
         }

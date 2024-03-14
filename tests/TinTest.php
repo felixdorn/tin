@@ -1,6 +1,9 @@
 <?php
 
 use Felix\Tin\Line;
+use Felix\Tin\Outputs\AnsiOutput;
+use Felix\Tin\Outputs\CallableOutput;
+use Felix\Tin\Outputs\HtmlOutput;
 use Felix\Tin\Outputs\TestOutput;
 use Felix\Tin\Themes\OneDark;
 use Felix\Tin\Tin;
@@ -23,15 +26,23 @@ it('can highlight', function () {
 });
 
 it('can skip lines when processing', function () {
-    $hl = $this->tin->process($this->sample, fn () => null);
+    $hl = (new Tin(new CallableOutput(
+        new OneDark(),
+        fn () => null
+    )))->highlight($this->sample);
 
     expect($hl)->toBeEmpty();
 });
 
 it('can process lines individually', function () {
-    $hl = $this->tin->process("<?php\n1;\n2;\n3;", function (Line $line) {
-        return $line->number % 2 === 0 ? $line->toString() : null;
-    });
+    $hl = (new Tin(new CallableOutput(
+        $theme = new OneDark(),
+        function (Line $line) use ($theme) {
+            return $line->number % 2 === 0 ?
+                (new AnsiOutput($theme))->transformLine($line) :
+                null;
+        }
+    )))->highlight("<?php\n1;\n2;\n3;");
 
     expect($hl)->toMatchSnapshot();
 });
@@ -56,4 +67,14 @@ test('line rendering is idempotent', function () {
     $a = $line->toString();
     $b = $line->toString();
     expect($b)->toBe($a);
+});
+
+it('can render HTML', function () {
+    $hl = (new Tin(
+        new HtmlOutput(
+            new OneDark()
+        )
+    ))->highlight($this->sample);
+
+    expect($hl)->toMatchSnapshot();
 });

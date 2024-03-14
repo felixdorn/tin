@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Felix\Tin\Themes;
 
-use Felix\Tin\Contracts\Theme;
+use Felix\Tin\Contracts\ThemeInterface;
 use Felix\Tin\Enums\TokenType;
 
-class JetbrainsDark extends Theme
+class JetbrainsDark extends ThemeInterface
 {
     public function color(TokenType $type): string
     {

@@ -3,11 +3,12 @@
 namespace Felix\Tin\Outputs;
 
 use Felix\Tin\Contracts\OutputInterface;
-use Felix\Tin\Contracts\Theme;
+use Felix\Tin\Contracts\ThemeInterface;
 use Felix\Tin\Enums\TokenType;
-use Felix\Tin\Themes\NullTheme;
+use Felix\Tin\Line;
+use Felix\Tin\Themes\NullThemeInterface;
 
-class TestOutput implements OutputInterface
+readonly class TestOutput implements OutputInterface
 {
     public function __construct()
     {
@@ -18,13 +19,13 @@ class TestOutput implements OutputInterface
         return $value;
     }
 
-    public function newLine(): string
+    public function theme(): ThemeInterface
     {
-        return PHP_EOL;
+        return new NullThemeInterface();
     }
 
-    public function theme(): Theme
+    public function transformLine(Line $line): string
     {
-        return new NullTheme();
+        return $line->toString() . PHP_EOL;
     }
 }

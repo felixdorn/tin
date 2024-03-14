@@ -1,6 +1,6 @@
 # tin
 
-tin is a PHP code highlighter for the terminal.
+tin is a code highlighter for PHP (Terminal, HTML, etc.).
 
 [![Tests](https://github.com/felixdorn/tin/actions/workflows/tests.yml/badge.svg)](https://github.com/felixdorn/tin/actions/workflows/tests.yml)
 [![Formats](https://github.com/felixdorn/tin/actions/workflows/formats.yml/badge.svg)](https://github.com/felixdorn/tin/actions/workflows/formats.yml)
@@ -39,29 +39,19 @@ echo Tin::from(JetbrainsDark::class, $ansi = true)->highlight("<?php\n\necho 'He
 
 ## Customizing the output
 
-Apart from using a custom theme to change the colors, you have complete control over the highlighting proccess.
+You have complete control over the highlighting process. Implement
+the [`Felix\Tin\Contracts\OutputInterface`](src/Contracts/OutputInterface.php) interface or implement a custom theme if
+you are just looking to change the colors.
 
-```php
-$tin->process(
-   $code,
-   function (\Felix\Tin\Line $line) {
-        $lineNumber = $line->output->transform(
-            \Felix\Tin\Enums\TokenType::LineNumber,
-            str_pad(
-                (string) $line->number,
-                strlen((string) $line->totalCount), ' ',
-                STR_PAD_LEFT
-            ) . ' | ',
-        );
+## Outputs
 
-        return $lineNumber . $line->toString()  . $line->output->newLine();
-    }
-);
-```
-
-> Returning null skips the line entirely.
+* [`Felix\Tin\Themes\AnsiOutput`](src/Outputs/AnsiOutput.php)
+* [`Felix\Tin\Themes\CallableOutput`](src/Outputs/CallableOutput.php)
+* [`Felix\Tin\Themes\HtmlOutput`](src/Outputs/HtmlOutput.php)
 
 ## Themes
+
+Themes define the colors used by outputs. The format is `r;g;b`, to match ANSI default format.
 
 * [`Felix\Tin\Themes\JetbrainsDark`](src/Themes/JetbrainsDark.php)
 * [`Felix\Tin\Themes\OneDark`](src/Themes/OneDark.php)
@@ -73,10 +63,10 @@ You need to extend `Felix\Tin\Themes\Theme` and set the colors to whatever you w
 The color are RGB values separated by a `;`.
 
 ```php
-use Felix\Tin\Contracts\Theme;
+use Felix\Tin\Contracts\ThemeInterface;
 use Felix\Tin\Enums\TokenType;
 
-class OneDark extends Theme
+class OneDark extends ThemeInterface
 {
     /** {@inheritDoc} */
     public function color(TokenType $type): string
@@ -93,10 +83,6 @@ class OneDark extends Theme
     }
 }
 ```
-
-## Future
-
-* PHPDoc
 
 ## Testing
 
