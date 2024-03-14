@@ -10,7 +10,7 @@ tin is a PHP code highlighter for the terminal.
 
 ## Installation
 
-> Requires [PHP 8.1+](https://php.net/releases)
+> Requires [PHP 8.3+](https://php.net/releases)
 
 You can install the package via composer:
 
