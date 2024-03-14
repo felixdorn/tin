@@ -70,7 +70,9 @@ when you need change a small thing without creating a class.
 $tin = new \Felix\Tin\Tin(
     new \Felix\Tin\Outputs\CallableOutput(
         new \Felix\Tin\Themes\OneDark(),
-        fn (\Felix\Tin\Line $line) => $line->number % 2 ? (new \Felix\Tin\Outputs\AnsiOutput())->transformLine($line) : null
+        fn (\Felix\Tin\Line $line) => $line->number % 2 ? 
+            (new \Felix\Tin\Outputs\AnsiOutput())->transformLine($line) :
+             null
     )
 )
 ```
